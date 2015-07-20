@@ -124,7 +124,7 @@ public class SplashActivity extends AppCompatActivity{
 
     private void animateLoading() {
 
-        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.15f, 1.0f, 1.15f,
+        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.05f, 1.0f, 1.05f,
                 Animation.RELATIVE_TO_SELF, 0.5f,Animation.RELATIVE_TO_SELF,0.5f);
 
 
@@ -145,7 +145,7 @@ public class SplashActivity extends AppCompatActivity{
                 View view = (View) mLoading.getParent();
 
                 AlphaAnimation alphaAnimation =  new AlphaAnimation(1.0f, 0.0f);
-                alphaAnimation.setDuration(1000);
+                alphaAnimation.setDuration(500);
                 alphaAnimation.setFillAfter(true);
                 alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
                     @Override

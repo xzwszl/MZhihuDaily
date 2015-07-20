@@ -24,4 +24,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.mcxiaoke.volley:library:1.0.17'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
+    compile 'com.android.support:design:22.2.0'
+    compile 'com.android.support:cardview-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'de.hdodenhof:circleimageview:1.3.0'
 }
