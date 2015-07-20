@@ -124,12 +124,12 @@ public class SplashActivity extends AppCompatActivity{
 
     private void animateLoading() {
 
-        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.05f, 1.0f, 1.05f,
+        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 1.1f, 1.0f, 1.1f,
                 Animation.RELATIVE_TO_SELF, 0.5f,Animation.RELATIVE_TO_SELF,0.5f);
 
 
 
-        scaleAnimation.setDuration(2000);
+        scaleAnimation.setDuration(1500);
         scaleAnimation.setFillAfter(true);
         mLoading.startAnimation(scaleAnimation);
 
