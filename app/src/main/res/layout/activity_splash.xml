@@ -1,0 +1,41 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.zxw.madaily.SplashActivity">
+
+    <ImageView
+        android:id="@+id/iv_loading"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="bottom|center">
+
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="30sp"
+            android:textColor="@android:color/white"
+            android:text="@string/app_loading_name"
+            android:shadowColor="@android:color/black"
+            android:shadowRadius="1"
+            android:shadowDy="1"
+            android:gravity="center"/>
+
+        <TextView android:id="@+id/tv_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="5dp"
+            android:typeface="serif"/>
+
+    </LinearLayout>
+
+</merge>

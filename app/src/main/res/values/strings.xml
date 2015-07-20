@@ -2,7 +2,9 @@
     <string name="app_name">MZhihuDaily</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash">SplashActivity</string>
+
+
+    <string name="app_loading_name">Material Design\n之\n知乎日报</string>
 </resources>
