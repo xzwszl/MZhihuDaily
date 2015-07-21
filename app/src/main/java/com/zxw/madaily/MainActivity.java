@@ -1,5 +1,6 @@
 package com.zxw.madaily;
 
+import android.app.DownloadManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,15 +10,29 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.zxw.madaily.adapter.ThemeAdapter;
+import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.entity.DailyTheme;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
-    private ListView mThemes;
+    private ListView mThemesListView;
+    private NavigationView mNavigationView;
+    private ThemeAdapter mThemeAdapter;
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +44,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
+
         initView();
+
+        gson = new Gson();
+        loadTheme();
     }
 
     private void initView(){
 
-        mThemes = (ListView) findViewById(R.id.lv_themes);
+        mThemesListView = (ListView) findViewById(R.id.lv_themes);
+
+        mThemesListView.addHeaderView(LayoutInflater.from(this).inflate(R.layout.nav_header,null));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
@@ -57,13 +78,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Menu menu = navigationView.getMenu();
-        menu.add("12");
-        menu.add("22");
-
-        menu.getItem(1).setActionView(R.layout.nav_header);
-
-        MenuItemCompat.setActionView(menu.findItem(R.id.action_settings),R.layout.nav_header);
+//        Menu menu = mNavigationView.getMenu();
+//        menu.add("12");
+//        menu.add("22");
+//
+//        menu.getItem(1).setActionView(R.layout.nav_header);
+//
+//        MenuItemCompat.setActionView(menu.findItem(R.id.action_settings), R.layout.nav_header);
     }
 
     @Override
@@ -95,5 +116,41 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private  void loadTheme(){
+
+        StringRequest themeRequest = new StringRequest(
+                Request.Method.GET,
+                Urls.BASE_URL + Urls.THEMES,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        DailyTheme dt = gson.fromJson(response, DailyTheme.class);
+                        mThemeAdapter = new ThemeAdapter(getApplication(), dt.getOthers());
+                        mThemesListView.setAdapter(mThemeAdapter);
+
+               //         mNavigationView.invalidate();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+        themeRequest.setTag(this.getLocalClassName());
+        DailyApplication.mInstance.getVolleyQueue().add(themeRequest);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+
+        DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
+
+        super.onDestroy();
     }
 }

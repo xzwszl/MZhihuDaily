@@ -1,8 +1,5 @@
 package com.zxw.madaily.config;
 
-/**
- * Created by v-lesh on 7/20/2015.
- */
 public interface Urls {
 
     String BASE_URL = "http://news-at.zhihu.com/api/";

@@ -1,8 +1,5 @@
 package com.zxw.madaily.entity;
 
-/**
- * Created by v-lesh on 7/21/2015.
- */
 public class Theme {
 
     private int color;
@@ -62,3 +59,4 @@ public class Theme {
         this.name = name;
     }
 }
+

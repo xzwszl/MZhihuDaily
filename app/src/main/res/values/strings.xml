@@ -8,6 +8,8 @@
 
     <string name="app_loading_name">Material Design\n之\n知乎日报</string>
     <string name="app_home">首页</string>
+    <string name="offline_download">离线下载</string>
+    <string name="my_setting">我的设置</string>
 
 
     <color name="window_background">#FFF5F5F5</color>
