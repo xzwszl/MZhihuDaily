@@ -3,6 +3,7 @@ package com.zxw.madaily;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,11 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private ListView mThemes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView(){
+
+        mThemes = (ListView) findViewById(R.id.lv_themes);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -51,7 +57,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Menu menu = navigationView.getMenu();
+        menu.add("12");
+        menu.add("22");
 
+        menu.getItem(1).setActionView(R.layout.nav_header);
+
+        MenuItemCompat.setActionView(menu.findItem(R.id.action_settings),R.layout.nav_header);
     }
 
     @Override
@@ -71,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.action_settings:
+                break;
         }
        // int id = item.getItemId();
 

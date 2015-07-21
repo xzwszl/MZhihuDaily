@@ -15,4 +15,6 @@ public interface Urls {
     String NEWS = "4/news/";
 
     String BEFORE = "before/";
+
+    String THEMES = "4/themes";
 }
