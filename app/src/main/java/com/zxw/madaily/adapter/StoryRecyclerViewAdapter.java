@@ -2,6 +2,7 @@ package com.zxw.madaily.adapter;
 
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,36 +16,70 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.Story;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
  * Created by xzwszl on 7/22/2015.
  */
-public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecyclerViewAdapter.StoryHolderView>{
+public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private List<Story> mStories;
+    private List<Story> mTops;
+    private static  TopStoryAdapter mTopAdapter;
 
-    public StoryRecyclerViewAdapter(List<Story> stories){
+    public StoryRecyclerViewAdapter(List<Story> stories, List<Story> tops){
         this.mStories = stories;
+        this.mTops = tops;
     }
     @Override
-    public StoryHolderView onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_item, parent, false);
-        return new StoryHolderView(view);
-    }
+        if (viewType == 1) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_item, parent, false);
+            return new StoryViewHolder(view);
+        } else if (viewType == 0) {
 
-    @Override
-    public void onBindViewHolder(StoryHolderView holder, int position) {
-        holder.mTitle.setText(mStories.get(position).getTitle());
-     //   holder.mImage.setImageDrawable(null);
-        List<String> urls = mStories.get(position).getImages();
-
-        if (urls!= null && urls.size() >0) {
-
-            loadImage(urls.get(0), holder.mImage);
+            if (mTopAdapter == null) mTopAdapter = new TopStoryAdapter(parent.getContext(),mTops);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewpager_top, parent, false);
+            return new TopViewHolder(view);
+        } else {
+            return null;
         }
     }
+
+
+
+    @Override
+    public int getItemViewType(int position) {
+
+        if (position == 0) return 0;
+        return 1;
+
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        int type = getItemViewType(position);
+
+        if (type == 0) {
+
+         //   TopViewHolder tholder = (TopViewHolder) holder;
+
+        } else if (type == 1){
+            ((StoryViewHolder) holder).mTitle.setText(mStories.get(position).getTitle());
+            //   holder.mImage.setImageDrawable(null);
+            List<String> urls = mStories.get(position).getImages();
+
+            if (urls!= null && urls.size() >0) {
+
+                loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
+            }
+        }
+        }
+
 
     @Override
     public int getItemCount() {
@@ -64,16 +99,74 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<StoryRecycler
         ImageLoader.getInstance().displayImage(url, image, options);
     }
 
-    public static class StoryHolderView extends RecyclerView.ViewHolder{
+    public static class StoryViewHolder extends RecyclerView.ViewHolder{
 
         public final ImageView mImage;
         public final TextView mTitle;
 
-        public StoryHolderView(View itemView) {
+        public StoryViewHolder(View itemView) {
             super(itemView);
 
             mImage = (ImageView) itemView.findViewById(R.id.iv_story);
             mTitle = (TextView) itemView.findViewById(R.id.tv_story);
+        }
+    }
+
+    public static class TopViewHolder extends RecyclerView.ViewHolder {
+
+        public final ViewPager mViewPager;
+        public final TextView mTitle;
+
+        public TopViewHolder(View itemView) {
+            super(itemView);
+
+            mViewPager = (ViewPager) itemView.findViewById(R.id.vp_top);
+            mTitle = (TextView) itemView.findViewById(R.id.tv_top_title);
+
+            dealWithViewPager(mViewPager, mTitle);
+        }
+        private void dealWithViewPager(final ViewPager vp, final TextView tv) {
+
+            vp.setAdapter(mTopAdapter);
+            vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int i, float v, int i1) {
+
+                }
+
+                @Override
+                public void onPageSelected(int i) {
+
+                    tv.setText(mTopAdapter.getPageTitle(i));
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int i) {
+
+                }
+            });
+
+            tv.setText(mTopAdapter.getPageTitle(0));
+            vp.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        Method method = ViewPager.class.getDeclaredMethod("setCurrentItemInternal", int.class, boolean.class, boolean.class, int.class);
+                        method.setAccessible(true);
+                        method.invoke(vp, vp.getCurrentItem() + 1, true, true, 1);
+
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                    vp.postDelayed(this, 5000);
+                }
+            }, 5000);
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.zxw.madaily.adapter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -13,6 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.zxw.madaily.entity.Story;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,14 +24,34 @@ import java.util.List;
 public class TopStoryAdapter extends PagerAdapter{
 
     private List<Story> mTopStories;
-    public TopStoryAdapter(List<Story> topStories){
+    private List<ImageView> mTopViews;
+
+    public TopStoryAdapter(Context context, List<Story> topStories){
         this.mTopStories = topStories;
+
+        if (topStories != null) {
+            mTopViews = new ArrayList<ImageView>();
+            for (int i = 0; i < mTopStories.size(); i++){
+                ImageView imageview = new ImageView(context);
+                imageview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                mTopViews.add(imageview);
+
+                loadImage(mTopStories.get(i).getImage(), imageview);
+            }
+        }
     }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return mTopStories.get(position % mTopStories.size()).getTitle();
+    }
+
     @Override
     public int getCount() {
-
-        return mTopStories == null ? 0 : mTopStories.size();
+        return Integer.MAX_VALUE;
     }
+
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
@@ -38,17 +61,21 @@ public class TopStoryAdapter extends PagerAdapter{
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        ImageView imageview = new ImageView(container.getContext());
-        imageview.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ImageView imageview = mTopViews.get(position % mTopStories.size());
+
+//        ViewParent vp = imageview.getParent();
+//        if (vp != null) {
+//            ((ViewGroup)vp).removeView(imageview);
+//        }
+
         ((ViewPager) container).addView(imageview);
-        loadImage(mTopStories.get(position).getImage(), imageview);
+
         return imageview;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-       container.removeView((View)object);
+      container.removeView((View)object);
     }
 
     private void loadImage(String url, ImageView image){

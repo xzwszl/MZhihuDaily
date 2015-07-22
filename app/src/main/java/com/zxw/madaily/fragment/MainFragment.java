@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.AccelerateInterpolator;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -30,7 +31,9 @@ import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.view.TopScroller;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.zip.Inflater;
 
 /**
  * Created by xzwszl on 7/22/2015.
@@ -38,11 +41,8 @@ import java.lang.reflect.Method;
 public class MainFragment extends Fragment{
 
     private RecyclerView mNewsRV;
-    private ViewPager mTopVP;
     private SwipeRefreshLayout mRefresh;
     private StoryRecyclerViewAdapter mStoryRecyclerViewAdapter;
-    private TopStoryAdapter mTopStoryAdapter;
-
     private Gson gson;
 
     private LatestNews mLn;
@@ -93,29 +93,9 @@ public class MainFragment extends Fragment{
 
         mRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.orange)
-                ,getResources().getColor(R.color.green)
-                ,getResources().getColor(R.color.blue));
+                , getResources().getColor(R.color.green)
+                , getResources().getColor(R.color.blue));
 
-
-        mTopVP = (ViewPager) root.findViewById(R.id.vp_top);
-
-        try {
-
-            Field field = ViewPager.class.getDeclaredField("mScroller");
-            field.setAccessible(true);
-            TopScroller scroller = new TopScroller(getActivity(), new AccelerateInterpolator());
-
-            field.set(mTopVP, scroller);
-
-            Method method = ViewPager.class.getDeclaredMethod("setCurrentItemInternal",Integer.class, Boolean.class, Boolean.class, Integer.class );
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     private void loadingData() {
@@ -129,23 +109,9 @@ public class MainFragment extends Fragment{
 
                         mLn = gson.fromJson(response, LatestNews.class);
 
-                        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(mLn.getStories());
+                        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(mLn.getStories(),mLn.getTop_stories());
 
                         mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
-
-                        mTopStoryAdapter = new TopStoryAdapter(mLn.getTop_stories());
-
-                        mTopVP.setAdapter(mTopStoryAdapter);
-
-                        mTopVP.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                mTopVP.setCurrentItem(((mTopVP.getCurrentItem()+1) % mTopVP.getAdapter().getCount()));
-
-                                mTopVP.postDelayed(this, 3000);
-                            }
-                        }, 1000);
                     }
                 },
                 new  Response.ErrorListener(){
