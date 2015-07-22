@@ -129,7 +129,7 @@ public class SplashActivity extends AppCompatActivity{
 
 
 
-        scaleAnimation.setDuration(1500);
+        scaleAnimation.setDuration(2000);
         scaleAnimation.setFillAfter(true);
         mLoading.startAnimation(scaleAnimation);
 
@@ -169,10 +169,6 @@ public class SplashActivity extends AppCompatActivity{
                 });
                 view.startAnimation(alphaAnimation);
 
-
-
-
-
              //   overridePendingTransition(0,R.anim.activity_close);
             }
 
@@ -181,8 +177,6 @@ public class SplashActivity extends AppCompatActivity{
 
             }
         });
-
-
 
     }
 

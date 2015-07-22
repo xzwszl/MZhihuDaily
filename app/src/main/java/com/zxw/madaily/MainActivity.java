@@ -3,8 +3,13 @@ package com.zxw.madaily;
 import android.app.DownloadManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +29,7 @@ import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.entity.DailyTheme;
+import com.zxw.madaily.fragment.MainFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,8 +37,12 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mThemesListView;
     private NavigationView mNavigationView;
+    private ViewPager mViewPager;
     private ThemeAdapter mThemeAdapter;
     private Gson gson;
+
+    private MainFragment mMainFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
 
         initView();
-
         gson = new Gson();
         loadTheme();
     }
@@ -56,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mThemesListView = (ListView) findViewById(R.id.lv_themes);
 
         mThemesListView.addHeaderView(LayoutInflater.from(this).inflate(R.layout.nav_header,null));
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,6 +85,29 @@ public class MainActivity extends AppCompatActivity {
                 menuItem.setChecked(true);
                 mDrawerLayout.closeDrawers();
                 return false;
+            }
+        });
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+
+                switch (position){
+                    case 0:
+                        if (mMainFragment == null) {
+                            mMainFragment = new MainFragment();
+                        }
+                        return mMainFragment;
+                    default:
+                        return mMainFragment;
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 1;
             }
         });
 
@@ -128,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
 
                         DailyTheme dt = gson.fromJson(response, DailyTheme.class);
-                        mThemeAdapter = new ThemeAdapter(getApplication(), dt.getOthers());
+                        mThemeAdapter = new ThemeAdapter(dt.getOthers());
                         mThemesListView.setAdapter(mThemeAdapter);
 
                //         mNavigationView.invalidate();
@@ -153,4 +186,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onDestroy();
     }
+
+
 }

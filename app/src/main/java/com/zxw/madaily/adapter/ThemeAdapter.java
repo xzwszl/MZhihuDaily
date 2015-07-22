@@ -17,11 +17,11 @@ import java.util.zip.Inflater;
 public class ThemeAdapter extends BaseAdapter{
 
     private List<Theme> mThemes;
-    private Context mContext;
+  //  private Context mContext;
 
-    public ThemeAdapter(Context context, List<Theme> themes){
+    public ThemeAdapter(List<Theme> themes){
 
-        this.mContext = context;
+   //     this.mContext = context;
         this.mThemes = themes;
     }
     @Override
@@ -45,7 +45,7 @@ public class ThemeAdapter extends BaseAdapter{
        // ViewHolder holder = null;
 
         if (convertView == null){
-            convertView =  LayoutInflater.from(mContext).inflate(R.layout.themes_item, parent, false);
+            convertView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.themes_item, parent, false);
         }
 
         ((TextView)convertView).setText(mThemes.get(position).getName());
