@@ -1,5 +1,6 @@
 package com.zxw.madaily.fragment;
 
+import android.nfc.cardemulation.OffHostApduService;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,9 +14,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
+import com.zxw.madaily.adapter.OtherRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.entity.DetailTheme;
 import com.zxw.madaily.view.TopSwipeRefreshLayout;
 
 /**
@@ -25,9 +29,11 @@ public class OtherFragment extends Fragment {
 
     private TopSwipeRefreshLayout mSwipeRefresh;
     private RecyclerView mRecyclerView;
-    pr
+    private OtherRecyclerViewAdapter mOAdapter;
+    private Gson gson;
 
-    @Nullable
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
@@ -37,9 +43,11 @@ public class OtherFragment extends Fragment {
         return root;
     }
 
+    @Nullable
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        init();
     }
 
     private void initView(View root){
@@ -59,7 +67,8 @@ public class OtherFragment extends Fragment {
     }
 
     private void init() {
-
+        gson = new Gson();
+        loadMessage();
     }
 
     private void loadMessage() {
@@ -71,6 +80,9 @@ public class OtherFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
 
+                        DetailTheme dt = gson.fromJson(response, DetailTheme.class);
+                        mOAdapter = new OtherRecyclerViewAdapter(dt);
+                        mRecyclerView.setAdapter(mOAdapter);
                     }
                 },
                 new Response.ErrorListener() {

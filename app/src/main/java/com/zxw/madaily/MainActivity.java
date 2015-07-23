@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 mOtherFragment = new OtherFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.container, mOtherFragment,String.valueOf(theme.getId()));
+                ft.addToBackStack(String.valueOf(theme.getId()));
                 ft.commit();
 
             }

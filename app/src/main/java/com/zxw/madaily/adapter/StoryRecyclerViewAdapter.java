@@ -69,9 +69,9 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
          //   TopViewHolder tholder = (TopViewHolder) holder;
 
         } else if (type == 1){
-            ((StoryViewHolder) holder).mTitle.setText(mStories.get(position).getTitle());
+            ((StoryViewHolder) holder).mTitle.setText(mStories.get(position-1).getTitle());
             //   holder.mImage.setImageDrawable(null);
-            List<String> urls = mStories.get(position).getImages();
+            List<String> urls = mStories.get(position-1).getImages();
 
             if (urls!= null && urls.size() >0) {
 
@@ -83,10 +83,10 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     @Override
     public int getItemCount() {
-        return mStories == null ? 0 : mStories.size();
+        return mStories == null ? 1 : mStories.size() + 1;
     }
 
-    private void loadImage(String url, ImageView image){
+    public static void loadImage(String url, ImageView image){
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .resetViewBeforeLoading(true)
