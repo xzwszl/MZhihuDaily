@@ -13,34 +13,23 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
 import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
-import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
-import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.view.TopSwipeRefreshLayout;
 
 /**
- * Created by xzwszl on 7/22/2015.
+ * Created by xzwszl on 7/23/2015.
  */
-public class MainFragment extends Fragment{
+public class OtherFragment extends Fragment {
 
-    private RecyclerView mNewsRV;
-    private TopSwipeRefreshLayout mRefresh;
-    private StoryRecyclerViewAdapter mStoryRecyclerViewAdapter;
-    private Gson gson;
-
-    private LatestNews mLn;
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private TopSwipeRefreshLayout mSwipeRefresh;
+    private RecyclerView mRecyclerView;
+    pr
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
         initView(root);
@@ -51,66 +40,54 @@ public class MainFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        init();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+    private void initView(View root){
 
-        DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getClass().getName());
-    }
-
-    private void init(){
-        gson = new Gson();
-        loadingData();
-    }
-
-    private void initView(View root) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        mNewsRV = (RecyclerView) root.findViewById(R.id.rv_refresh);
-        mNewsRV.setLayoutManager(layoutManager);
+        mRecyclerView = (RecyclerView) root.findViewById(R.id.rv_refresh);
+        mRecyclerView.setLayoutManager(layoutManager);
 
-
-        mRefresh = (TopSwipeRefreshLayout) root.findViewById(R.id.srl_refresh);
-
-        mRefresh.setColorSchemeColors(
+        mSwipeRefresh = (TopSwipeRefreshLayout) root.findViewById(R.id.srl_refresh);
+        mSwipeRefresh.setColorSchemeColors(
                 getResources().getColor(R.color.orange)
                 , getResources().getColor(R.color.green)
                 , getResources().getColor(R.color.blue));
 
     }
 
-    private void loadingData() {
+    private void init() {
 
-        StringRequest storyRequest = new StringRequest(
+    }
+
+    private void loadMessage() {
+
+        StringRequest dtRequest = new StringRequest(
                 Request.Method.GET,
-                Urls.BASE_URL + Urls.NEWS + Urls.LASTEST,
+                Urls.BASE_URL + Urls.THEME + this.getTag(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
-                        mLn = gson.fromJson(response, LatestNews.class);
-
-                        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(mLn.getStories(),mLn.getTop_stories());
-
-                        mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
                     }
                 },
-                new  Response.ErrorListener(){
-
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
                     }
                 }
-
         );
 
-        storyRequest.setTag(this.getClass().getName());
-        DailyApplication.mInstance.getVolleyQueue().add(storyRequest);
+        dtRequest.setTag(this.getTag());
+        DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getTag());
     }
 }

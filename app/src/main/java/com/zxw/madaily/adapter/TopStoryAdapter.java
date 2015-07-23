@@ -63,10 +63,10 @@ public class TopStoryAdapter extends PagerAdapter{
 
         ImageView imageview = mTopViews.get(position % mTopStories.size());
 
-//        ViewParent vp = imageview.getParent();
-//        if (vp != null) {
-//            ((ViewGroup)vp).removeView(imageview);
-//        }
+        ViewParent vp = imageview.getParent();
+        if (vp != null) {
+            ((ViewGroup)vp).removeView(imageview);
+        }
 
         ((ViewPager) container).addView(imageview);
 

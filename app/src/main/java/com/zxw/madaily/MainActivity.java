@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -29,7 +31,9 @@ import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.entity.DailyTheme;
+import com.zxw.madaily.entity.Theme;
 import com.zxw.madaily.fragment.MainFragment;
+import com.zxw.madaily.fragment.OtherFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Gson gson;
 
     private MainFragment mMainFragment;
+    private OtherFragment mOtherFragment;
 
 
     @Override
@@ -64,7 +69,31 @@ public class MainActivity extends AppCompatActivity {
 
         mThemesListView = (ListView) findViewById(R.id.lv_themes);
 
-        mThemesListView.addHeaderView(LayoutInflater.from(this).inflate(R.layout.nav_header,null));
+        mThemesListView.addHeaderView(LayoutInflater.from(this).inflate(R.layout.nav_header, null));
+
+        // we have a header here
+        mThemesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                mDrawerLayout.closeDrawers();
+
+                if (position == 0) return;
+
+                Theme theme = (Theme) mThemeAdapter.getItem(position - 1);
+                if (mOtherFragment != null && String.valueOf(theme.getId()).equals(mOtherFragment.getTag())) {
+
+                        return;
+                }
+
+                mOtherFragment = new OtherFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.container, mOtherFragment,String.valueOf(theme.getId()));
+                ft.commit();
+
+            }
+        });
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -88,28 +117,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-
-        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-
-                switch (position){
-                    case 0:
-                        if (mMainFragment == null) {
-                            mMainFragment = new MainFragment();
-                        }
-                        return mMainFragment;
-                    default:
-                        return mMainFragment;
-                }
-            }
-
-            @Override
-            public int getCount() {
-                return 1;
-            }
-        });
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.container, new MainFragment(),"main");
+        ft.commit();
+//
+//        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+//
+//        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+//            @Override
+//            public Fragment getItem(int position) {
+//
+//                switch (position){
+//                    case 0:
+//                        if (mMainFragment == null) {
+//                            mMainFragment = new MainFragment();
+//                        }
+//                        return mMainFragment;
+//                    default:
+//                        return mMainFragment;
+//                }
+//            }
+//
+//            @Override
+//            public int getCount() {
+//                return 1;
+//            }
+//
+//        });
 
 //        Menu menu = mNavigationView.getMenu();
 //        menu.add("12");

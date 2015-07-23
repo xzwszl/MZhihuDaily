@@ -31,7 +31,7 @@ public class ThemeAdapter extends BaseAdapter{
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return mThemes.get(position);
     }
 
     @Override
