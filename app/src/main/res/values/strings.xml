@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MZhihuDaily</string>
+    <string name="app_name">知乎日报</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="action_settings">Settings</string>
@@ -18,4 +18,7 @@
     <color name="blue">#000099</color>
     <color name="half_black">#8F000000</color>
     <color name="hard_black">#AF000000</color>
+    <string name="title_activity_content">ContentActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

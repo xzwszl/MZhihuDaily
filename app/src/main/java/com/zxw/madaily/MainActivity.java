@@ -1,9 +1,11 @@
 package com.zxw.madaily;
 
 import android.app.DownloadManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -30,6 +32,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.DailyTheme;
 import com.zxw.madaily.entity.Theme;
 import com.zxw.madaily.fragment.MainFragment;
@@ -82,15 +85,17 @@ public class MainActivity extends AppCompatActivity {
                 if (position == 0) return;
 
                 Theme theme = (Theme) mThemeAdapter.getItem(position - 1);
-                if (mOtherFragment != null && String.valueOf(theme.getId()).equals(mOtherFragment.getTag())) {
 
-                        return;
+                if (mOtherFragment != null && String.valueOf(theme.getId()).equals(mOtherFragment.getTag())) {
+                    return;
                 }
 
                 mOtherFragment = new OtherFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.container, mOtherFragment,String.valueOf(theme.getId()));
-                ft.addToBackStack(String.valueOf(theme.getId()));
+
+                ft.replace(R.id.container, mOtherFragment, String.valueOf(theme.getId()));
+                ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
+
                 ft.commit();
 
             }
@@ -119,7 +124,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.container, new MainFragment(),"main");
+        if (mMainFragment == null) {
+            mMainFragment = new MainFragment();
+        }
+        ft.replace(R.id.container,mMainFragment,"main");
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         ft.commit();
 //
 //        mViewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -156,6 +165,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+
+        FragmentManager fm = (FragmentManager)getSupportFragmentManager();
+
+        Fragment fragment = fm.findFragmentByTag("main");
+
+        if (fragment != null && fragment.isVisible()) {
+            super.onBackPressed();
+        } else {
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+            if (mMainFragment == null) {
+                mMainFragment = new MainFragment();
+            }
+            ft.replace(R.id.container, mMainFragment, "main");
+            ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
+
+            ft.commit();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -174,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.action_settings:
+                startActivity(new Intent(MainActivity.this, ContentActivity.class));
                 break;
         }
        // int id = item.getItemId();

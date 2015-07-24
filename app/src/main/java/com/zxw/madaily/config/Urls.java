@@ -16,4 +16,5 @@ public interface Urls {
     String THEMES = "4/themes";
 
     String THEME = "4/theme/";
+
 }
