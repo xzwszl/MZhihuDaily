@@ -10,12 +10,12 @@ public class Content {
     private String body;
     private String image_source;
     private String title;
-    private String image_url;
+    private String image;
     private String share_url;
     private List<String> js;
     private List<Avatar> recommenders;
     private String ga_prefix;
-    private List<Section> section;
+    private Section section;
     private int type;
     private int id;
     private List<String> css;
@@ -23,11 +23,11 @@ public class Content {
     public Content() {
     }
 
-    public Content(String body, String image_source, String title, String image_url, String share_url, List<String> js, List<Avatar> recommenders, String ga_prefix, List<Section> section, int type, int id, List<String> css) {
+    public Content(String body, String image_source, String title, String image, String share_url, List<String> js, List<Avatar> recommenders, String ga_prefix, Section section, int type, int id, List<String> css) {
         this.body = body;
         this.image_source = image_source;
         this.title = title;
-        this.image_url = image_url;
+        this.image = image;
         this.share_url = share_url;
         this.js = js;
         this.recommenders = recommenders;
@@ -62,12 +62,12 @@ public class Content {
         this.title = title;
     }
 
-    public String getImage_url() {
-        return image_url;
+    public String getImage() {
+        return image;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getShare_url() {
@@ -102,11 +102,11 @@ public class Content {
         this.ga_prefix = ga_prefix;
     }
 
-    public List<Section> getSection() {
+    public Section getSection() {
         return section;
     }
 
-    public void setSection(List<Section> section) {
+    public void setSection(Section section) {
         this.section = section;
     }
 

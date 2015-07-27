@@ -1,5 +1,6 @@
 package com.zxw.madaily.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,10 +15,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.view.TopSwipeRefreshLayout;
 
@@ -95,7 +98,14 @@ public class MainFragment extends Fragment{
 
                         mLn = gson.fromJson(response, LatestNews.class);
 
-                        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(mLn.getStories(),mLn.getTop_stories());
+                        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(mLn.getStories(), mLn.getTop_stories(), new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
+                            @Override
+                            public void select(View view, int position) {
+                                Intent intent = new Intent(getActivity(), ContentActivity.class);
+                                intent.putExtra("id", mLn.getStories().get(position-1).getId());
+                                startActivity(intent);
+                            }
+                        });
 
                         mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
                     }

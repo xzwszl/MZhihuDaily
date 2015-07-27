@@ -4,6 +4,7 @@ package com.zxw.madaily.entity;
  * Created by xzwszl on 7/24/2015.
  */
 public class Avatar {
+
     private String avatar;
 
     public Avatar() {

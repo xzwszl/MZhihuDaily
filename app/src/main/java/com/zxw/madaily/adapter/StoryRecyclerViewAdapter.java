@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.Story;
+import com.zxw.madaily.http.Utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,17 +29,31 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private List<Story> mStories;
     private List<Story> mTops;
     private static  TopStoryAdapter mTopAdapter;
+    private OnItemSelectedLinstener mOnItemSelectedLinstener;
 
-    public StoryRecyclerViewAdapter(List<Story> stories, List<Story> tops){
+    public StoryRecyclerViewAdapter(List<Story> stories, List<Story> tops, OnItemSelectedLinstener linstener){
         this.mStories = stories;
         this.mTops = tops;
+        this.mOnItemSelectedLinstener = linstener;
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == 1) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_item, parent, false);
-            return new StoryViewHolder(view);
+
+            final StoryViewHolder holder = new StoryViewHolder(view);
+            view.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemSelectedLinstener != null) {
+
+                        mOnItemSelectedLinstener.select(v, holder.getLayoutPosition());
+                    }
+                }
+            });
+            return holder;
         } else if (viewType == 0) {
 
             if (mTopAdapter == null) mTopAdapter = new TopStoryAdapter(parent.getContext(),mTops);
@@ -75,7 +90,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
             if (urls!= null && urls.size() >0) {
 
-                loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
+                Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
             }
         }
         }
@@ -86,18 +101,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         return mStories == null ? 1 : mStories.size() + 1;
     }
 
-    public static void loadImage(String url, ImageView image){
 
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .resetViewBeforeLoading(true)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-
-        ImageLoader.getInstance().displayImage(url, image, options);
-    }
 
     public static class StoryViewHolder extends RecyclerView.ViewHolder{
 
@@ -168,5 +172,10 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
             }, 5000);
         }
+    }
+
+    public interface OnItemSelectedLinstener{
+
+        void select(View view, int position);
     }
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.DetailTheme;
+import com.zxw.madaily.http.Utils;
 
 import java.util.List;
 
@@ -49,14 +50,14 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
             if (urls!= null && urls.size() >0) {
 
                 svh.mImage.setVisibility(View.VISIBLE);
-                StoryRecyclerViewAdapter.loadImage(urls.get(0), svh.mImage);
+                Utils.loadImage(urls.get(0), svh.mImage);
             } else {
                 svh.mImage.setVisibility(View.GONE);
             }
             svh.mTitle.setText(mDetailTheme.getStories().get(position-1).getTitle());
         } else if (type == 0) {
             StoryRecyclerViewAdapter.StoryViewHolder ovh = (StoryRecyclerViewAdapter.StoryViewHolder) holder;
-            StoryRecyclerViewAdapter.loadImage(mDetailTheme.getBackground(), ovh.mImage);
+            Utils.loadImage(mDetailTheme.getBackground(), ovh.mImage);
             ovh.mTitle.setText(mDetailTheme.getDescription());
         }
     }
