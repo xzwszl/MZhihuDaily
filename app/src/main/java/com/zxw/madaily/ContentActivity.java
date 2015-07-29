@@ -67,17 +67,17 @@ public class ContentActivity extends AppCompatActivity {
 
         mBackDrop = (ImageView) findViewById(R.id.backdrop);
         mWebView = (WebView) findViewById(R.id.wv_content);
-        mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-
-                mWebView.getSettings().setLoadsImagesAutomatically(true);
-            }
-        });
+//        mWebView.setWebViewClient(new WebViewClient() {
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//
+//                mWebView.getSettings().setLoadsImagesAutomatically(true);
+//            }
+//        });
         WebSettings settings = mWebView.getSettings();
         settings.setDefaultTextEncodingName("utf-8");
-        settings.setLoadsImagesAutomatically(false);
+//        settings.setLoadsImagesAutomatically(false);
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -127,6 +127,7 @@ public class ContentActivity extends AppCompatActivity {
 
 
       //  content = "<img src=\"http://pic4.zhimg.com/36eb1c96863b4e611ccb7e82b6fced8f_is.jpg\">";
+        List<String> sds = null;
 
         if (TextUtils.isEmpty(content)) return;
 
@@ -140,15 +141,21 @@ public class ContentActivity extends AppCompatActivity {
 
 
 
-                //List<String> sds = new ArrayList<String>();
+               sds = new ArrayList<String>();
+
+                HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
+
+                String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
+
 
                 for (String iu : imageUrls) {
 
-                 //   sds.add("file://" + basePath + "/" + fsg.generate(iu));
+                    String filepath = "file://" + basePath + "/" +  fsg.generate(iu);
+
+                    sds.add(filepath);
                     downloadImage(iu);//loadImage(iu, new ImageView(this));
                 }
-
-                //content = DataUtils.replaceString(content, imageUrls, sds);
+                content = DataUtils.replaceString(content, imageUrls, sds);
 
             }
         }
@@ -159,6 +166,8 @@ public class ContentActivity extends AppCompatActivity {
                 "text/html",
                 "charset=utf-8",
                 null);
+
+        mWebView.loadUrl("javascript:showDefaultImage('" +"default.jpg" +"')");
     }
 
     public void downloadImage(String url){
@@ -186,11 +195,11 @@ public class ContentActivity extends AppCompatActivity {
 
                 HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
 
-                String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
+                String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "MADaily/cache/image").getPath();
 
-                String filepath = "file://" + basePath + "/" +  fsg.generate(imageUri);
+                String filepath = "file://" + basePath + "/" + fsg.generate(imageUri);
 
-                mWebView.loadUrl("javascript:showImage('"+ imageUri + "','"+ "')");
+                mWebView.loadUrl("javascript:showImage('" + filepath + "','" + filepath + "')");
             }
 
             @Override
@@ -229,6 +238,7 @@ public class ContentActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mWebView.clearCache(true);
         DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
     }
 }
