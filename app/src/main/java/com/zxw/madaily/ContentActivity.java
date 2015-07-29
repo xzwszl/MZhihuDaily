@@ -1,5 +1,6 @@
 package com.zxw.madaily;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +8,10 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
@@ -18,6 +21,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.entity.Content;
@@ -59,10 +67,19 @@ public class ContentActivity extends AppCompatActivity {
 
         mBackDrop = (ImageView) findViewById(R.id.backdrop);
         mWebView = (WebView) findViewById(R.id.wv_content);
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                mWebView.getSettings().setLoadsImagesAutomatically(true);
+            }
+        });
         WebSettings settings = mWebView.getSettings();
         settings.setDefaultTextEncodingName("utf-8");
         settings.setLoadsImagesAutomatically(false);
         settings.setAllowFileAccess(true);
+        settings.setJavaScriptEnabled(true);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -70,9 +87,6 @@ public class ContentActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String a = new Md5FileNameGenerator().generate("http://news.at.zhihu.com/css/news_qa.auto.css?v=811bb");
-
-        System.out.println();
 
     }
 
@@ -88,7 +102,7 @@ public class ContentActivity extends AppCompatActivity {
                         mContent = gson.fromJson(response, Content.class);
 
                         if (mContent != null) {
-                           // Utils.loadImage(mContent.getImage(), mBackDrop);
+                            Utils.loadImage(mContent.getImage(), mBackDrop);
 
                             loadImage(mContent.getBody());
                            // mWebView.loadData(, "text/html", "charset=utf-8");
@@ -112,7 +126,7 @@ public class ContentActivity extends AppCompatActivity {
     private void loadImage(String content) {
 
 
-        content = "<img src=\"http://pic4.zhimg.com/36eb1c96863b4e611ccb7e82b6fced8f_is.jpg\">";
+      //  content = "<img src=\"http://pic4.zhimg.com/36eb1c96863b4e611ccb7e82b6fced8f_is.jpg\">";
 
         if (TextUtils.isEmpty(content)) return;
 
@@ -122,34 +136,68 @@ public class ContentActivity extends AppCompatActivity {
 
             if (imageUrls != null && imageUrls.size() > 0) {
 
-                HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
+               // HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
 
-                String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
 
-                File file = new File("file://" + basePath + "/" + "-1472368281");
 
-                if (file.exists())
-                    System.out.println(file.exists());
-
-                List<String> sds = new ArrayList<String>();
+                //List<String> sds = new ArrayList<String>();
 
                 for (String iu : imageUrls) {
 
-                    sds.add("file://" + basePath + "/-1472368281");
-       //             Utils.downloadImage(iu);//loadImage(iu, new ImageView(this));
+                 //   sds.add("file://" + basePath + "/" + fsg.generate(iu));
+                    downloadImage(iu);//loadImage(iu, new ImageView(this));
                 }
 
-                content = DataUtils.replaceString(content, imageUrls, sds);
+                //content = DataUtils.replaceString(content, imageUrls, sds);
 
             }
         }
 
         mWebView.loadDataWithBaseURL("file:///android_asset/",
-             //   "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /></head><body>" + content + "</body></html>",
-             "<html><body>" + content + "</body></html>",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body>" + content + "</body></html>",
+                //"<html><body><img src=\"" + Environment.getExternalStorageDirectory().toString() + "/MADaily/cache/image/-1472368281" + "\"></body></html>",
                 "text/html",
                 "charset=utf-8",
                 null);
+    }
+
+    public void downloadImage(String url){
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .resetViewBeforeLoading(true)
+                .cacheOnDisk(true)
+                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
+
+        ImageLoader.getInstance().loadImage(url, options, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+                HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
+
+                String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
+
+                String filepath = "file://" + basePath + "/" +  fsg.generate(imageUri);
+
+                mWebView.loadUrl("javascript:showImage('"+ imageUri + "','"+ "')");
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

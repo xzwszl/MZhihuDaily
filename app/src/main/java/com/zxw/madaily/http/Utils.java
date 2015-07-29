@@ -26,37 +26,4 @@ public class Utils {
 
         ImageLoader.getInstance().displayImage(url, image, options);
     }
-
-    public static void downloadImage(String url){
-
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .resetViewBeforeLoading(true)
-                .cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-
-        ImageLoader.getInstance().loadImage(url, options, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-                int ii = 0;
-            }
-
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
-
-            }
-        });
-    }
 }
