@@ -1,9 +1,8 @@
 function showImage(imageUri, fileUri) {
 
-    var objs = document.getElementsByTagName("img");
+    var objs = document.querySelectorAll('img'));
 
     for (var i=0; i < objs.length; i++) {
-
 
           if (objs[i].dataset.url == imageUri) {
 
@@ -15,16 +14,15 @@ function showImage(imageUri, fileUri) {
 }
 
 function onLoad() {
-
     showDefaultImage('default_pic_content_image_download_dark.png');
 }
 
 function showDefaultImage(imageUri) {
 
-    var objs = document.getElementsByTagName("img");
+    var objs = document.document.querySelectorAll('img');
 
     for (var i=0; i < objs.length; i++) {
-            objs[i].dataset.url = objs[i]['src'];
+            objs[i].dataset.url = objs[i]['src'];i
             objs[i]['src'] = imageUri;
      }
 }

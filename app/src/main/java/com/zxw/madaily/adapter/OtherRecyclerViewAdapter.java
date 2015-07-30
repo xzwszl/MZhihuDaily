@@ -1,13 +1,9 @@
 package com.zxw.madaily.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.DetailTheme;
 import com.zxw.madaily.http.Utils;
@@ -20,9 +16,11 @@ import java.util.List;
 public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private DetailTheme mDetailTheme;
+    private  StoryRecyclerViewAdapter.OnItemSelectedLinstener linstener;
 
-    public OtherRecyclerViewAdapter(DetailTheme detailTheme){
+    public OtherRecyclerViewAdapter(DetailTheme detailTheme, StoryRecyclerViewAdapter.OnItemSelectedLinstener linstener){
         this.mDetailTheme = detailTheme;
+        this.linstener = linstener;
     }
 
     @Override
@@ -30,7 +28,18 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
 
         if (viewType == 1) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_item, parent, false);
-            return new  StoryRecyclerViewAdapter.StoryViewHolder(view);
+
+            final StoryRecyclerViewAdapter.StoryViewHolder holder =  new  StoryRecyclerViewAdapter.StoryViewHolder(view);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (linstener != null) {
+                        linstener.select(v, holder.getLayoutPosition());
+                    }
+                }
+            });
+            return holder;
         } else if (viewType == 0) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.other_top, parent, false);
             return new StoryRecyclerViewAdapter.StoryViewHolder(view);

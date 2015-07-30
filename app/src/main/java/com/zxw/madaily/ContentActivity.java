@@ -102,11 +102,13 @@ public class ContentActivity extends AppCompatActivity {
                         mContent = gson.fromJson(response, Content.class);
 
                         if (mContent != null) {
+
+                            if (TextUtils.isEmpty(mContent.getImage())) {
+
+                            }
                             Utils.loadImage(mContent.getImage(), mBackDrop);
 
                             loadImage(mContent.getBody());
-                           // mWebView.loadData(, "text/html", "charset=utf-8");
-                           // mWebView.loadUrl("http://slashdot.org/");
                         }
 
                     }
@@ -124,10 +126,6 @@ public class ContentActivity extends AppCompatActivity {
     }
 
     private void loadImage(String content) {
-
-
-      //  content = "<img src=\"http://pic4.zhimg.com/36eb1c96863b4e611ccb7e82b6fced8f_is.jpg\">";
-    //   List<String> sds = null;
 
         if (TextUtils.isEmpty(content)) return;
 

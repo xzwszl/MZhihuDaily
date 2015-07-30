@@ -1,5 +1,6 @@
 package com.zxw.madaily.fragment;
 
+import android.content.Intent;
 import android.nfc.cardemulation.OffHostApduService;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,9 +16,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.adapter.OtherRecyclerViewAdapter;
+import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.entity.DetailTheme;
 import com.zxw.madaily.view.TopSwipeRefreshLayout;
@@ -80,8 +83,15 @@ public class OtherFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
 
-                        DetailTheme dt = gson.fromJson(response, DetailTheme.class);
-                        mOAdapter = new OtherRecyclerViewAdapter(dt);
+                        final DetailTheme dt = gson.fromJson(response, DetailTheme.class);
+                        mOAdapter = new OtherRecyclerViewAdapter(dt, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
+                            @Override
+                            public void select(View view, int position) {
+                                Intent intent = new Intent(getActivity(), ContentActivity.class);
+                                intent.putExtra("id", dt.getStories().get(position-1).getId());
+                                startActivity(intent);
+                            }
+                        });
                         mRecyclerView.setAdapter(mOAdapter);
                     }
                 },
