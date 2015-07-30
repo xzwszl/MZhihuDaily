@@ -127,7 +127,7 @@ public class ContentActivity extends AppCompatActivity {
 
 
       //  content = "<img src=\"http://pic4.zhimg.com/36eb1c96863b4e611ccb7e82b6fced8f_is.jpg\">";
-        List<String> sds = null;
+    //   List<String> sds = null;
 
         if (TextUtils.isEmpty(content)) return;
 
@@ -141,33 +141,33 @@ public class ContentActivity extends AppCompatActivity {
 
 
 
-               sds = new ArrayList<String>();
+           //    sds = new ArrayList<String>();
 
-                HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
+           //     HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
 
-                String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
+          //      String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
 
 
                 for (String iu : imageUrls) {
 
-                    String filepath = "file://" + basePath + "/" +  fsg.generate(iu);
+                  //  String filepath = "file://" + basePath + "/" +  fsg.generate(iu);
 
-                    sds.add(filepath);
+                 //   sds.add(filepath);
                     downloadImage(iu);//loadImage(iu, new ImageView(this));
                 }
-                content = DataUtils.replaceString(content, imageUrls, sds);
+             //   content = DataUtils.replaceString(content, imageUrls, sds);
 
             }
         }
 
         mWebView.loadDataWithBaseURL("file:///android_asset/",
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body>" + content + "</body></html>",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body onLoad=\"onLoad()\">" + content + "</body></html>",
                 //"<html><body><img src=\"" + Environment.getExternalStorageDirectory().toString() + "/MADaily/cache/image/-1472368281" + "\"></body></html>",
                 "text/html",
                 "charset=utf-8",
                 null);
 
-        mWebView.loadUrl("javascript:showDefaultImage('" +"default.jpg" +"')");
+       //mWebView.loadUrl("javascript:");
     }
 
     public void downloadImage(String url){
@@ -199,7 +199,7 @@ public class ContentActivity extends AppCompatActivity {
 
                 String filepath = "file://" + basePath + "/" + fsg.generate(imageUri);
 
-                mWebView.loadUrl("javascript:showImage('" + filepath + "','" + filepath + "')");
+                mWebView.loadUrl("javascript:showImage('" + imageUri + "','" + filepath + "')");
             }
 
             @Override
