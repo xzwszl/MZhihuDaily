@@ -19,8 +19,10 @@
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:expandedTitleMarginStart="20dp"
+            app:expandedTitleMarginEnd="20dp"
+            app:expandedTitleMarginBottom="30dp"
+            app:expandedTitleTextAppearance="@android:style/TextAppearance.Large">
 
             <ImageView
                 android:id="@+id/backdrop"
@@ -30,12 +32,50 @@
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax" />
 
+            <TextView
+                android:id="@+id/tv_top_right"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/top_vp_front"
+                android:paddingBottom="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textColor="@color/half_black"
+                android:textSize="14sp"
+                android:gravity="bottom|right"/>
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:id="@+id/tv_popularity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:layout_gravity="right|center"
+                    android:drawableLeft="@drawable/ic_popularity"
+                    android:drawablePadding="3dp"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/white"/>
+
+                <TextView
+                    android:id="@+id/tv_comments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:layout_gravity="right|center"
+                    android:drawableLeft="@drawable/ic_comments"
+                    android:drawablePadding="3dp"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/white"
+                    android:layout_marginRight="15dp"/>
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

@@ -3,9 +3,11 @@ package com.zxw.madaily;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,8 +32,11 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.entity.Content;
+import com.zxw.madaily.entity.Extra;
 import com.zxw.madaily.http.Utils;
 import com.zxw.madaily.tool.DataUtils;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,9 +48,12 @@ public class ContentActivity extends AppCompatActivity {
 
     private int id;
     private Content mContent;
+    private Extra mExtra;
     private Gson gson;
     private ImageView mBackDrop;
     private WebView mWebView;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private TextView mCopyRight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +74,11 @@ public class ContentActivity extends AppCompatActivity {
 
     private void initView() {
 
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
+
+        mCopyRight = (TextView) findViewById(R.id.tv_top_right);
+
         mBackDrop = (ImageView) findViewById(R.id.backdrop);
         mWebView = (WebView) findViewById(R.id.wv_content);
 //        mWebView.setWebViewClient(new WebViewClient() {
@@ -82,6 +96,7 @@ public class ContentActivity extends AppCompatActivity {
         settings.setJavaScriptEnabled(true);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
 
@@ -103,10 +118,17 @@ public class ContentActivity extends AppCompatActivity {
 
                         if (mContent != null) {
 
-                            if (TextUtils.isEmpty(mContent.getImage())) {
-
+                            if (!TextUtils.isEmpty(mContent.getImage())) {
+                                Utils.loadImage(mContent.getImage(), mBackDrop);
                             }
-                            Utils.loadImage(mContent.getImage(), mBackDrop);
+
+                            if (!TextUtils.isEmpty(mContent.getTitle())) {
+                                mCollapsingToolbarLayout.setTitle(mContent.getTitle());
+                            }
+
+                            if (!TextUtils.isEmpty(mContent.getImage_source())) {
+                               // mCopyRight.setText(mContent.getImage_source());
+                            }
 
                             loadImage(mContent.getBody());
                         }
@@ -123,6 +145,36 @@ public class ContentActivity extends AppCompatActivity {
 
         contentRequest.setTag(this.getLocalClassName());
         DailyApplication.mInstance.getVolleyQueue().add(contentRequest);
+    }
+
+    private void loadComments() {
+
+        StringRequest commentRequest = new StringRequest(
+                Request.Method.GET,
+                Urls.BASE_URL + Urls.NEWS + id,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        mExtra = gson.fromJson(response, Extra.class);
+
+                        if (mExtra != null) {
+
+
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+
+        commentRequest.setTag(this.getLocalClassName());
+        DailyApplication.mInstance.getVolleyQueue().add(commentRequest);
     }
 
     private void loadImage(String content) {
@@ -227,8 +279,10 @@ public class ContentActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            item.setTitle("10");
             return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
