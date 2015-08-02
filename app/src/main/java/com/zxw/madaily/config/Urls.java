@@ -17,4 +17,11 @@ public interface Urls {
 
     String THEME = "4/theme/";
 
+    String STORY_EXTRA = "4/story-extra/";
+
+    String STORY = "4/story/";
+
+    String LONG_COMMENT = "long-comments";
+
+    String SHORT_COMMENT = "short-comments";
 }

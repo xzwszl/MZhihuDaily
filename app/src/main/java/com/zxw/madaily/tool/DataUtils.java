@@ -1,6 +1,9 @@
 package com.zxw.madaily.tool;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,5 +59,14 @@ public class DataUtils {
         }
 
         return rp;
+    }
+
+    public static String getDate(long time) {
+
+        Date date = new Date(time * 1000);
+
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        return format.format(date);
     }
 }

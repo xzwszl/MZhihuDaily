@@ -206,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.action_settings:
-                startActivity(new Intent(MainActivity.this, ContentActivity.class));
                 break;
         }
        // int id = item.getItemId();

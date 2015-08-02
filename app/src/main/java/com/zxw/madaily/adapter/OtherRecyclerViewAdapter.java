@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.DetailTheme;
+import com.zxw.madaily.entity.Story;
 import com.zxw.madaily.http.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +23,35 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
     public OtherRecyclerViewAdapter(DetailTheme detailTheme, StoryRecyclerViewAdapter.OnItemSelectedLinstener linstener){
         this.mDetailTheme = detailTheme;
         this.linstener = linstener;
+    }
+
+   public void addStories(List<Story> stories) {
+
+       if (mDetailTheme == null || stories == null) {
+           throw  new NullPointerException();
+       }
+
+       if (mDetailTheme.getStories() == null) {
+
+           mDetailTheme.setStories(stories);
+       } else {
+           mDetailTheme.getStories().addAll(stories);
+       }
+   }
+
+    public List<Story> getStories() {
+
+        return mDetailTheme == null ? null : mDetailTheme.getStories();
+    }
+
+    public void setmDetailTheme(DetailTheme mDetailTheme) {
+        this.mDetailTheme = mDetailTheme;
+    }
+
+    public void setStories(List<Story> stories) {
+
+        if (mDetailTheme != null)
+            this.mDetailTheme.setStories(stories);
     }
 
     @Override
@@ -54,7 +85,7 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
 
         if (type == 1) {
             StoryRecyclerViewAdapter.StoryViewHolder svh =(StoryRecyclerViewAdapter.StoryViewHolder) holder;
-            List<String> urls = mDetailTheme.getStories().get(position-1).getImages();
+            List<String> urls = mDetailTheme.getStories().get(position - 1).getImages();
 
             if (urls!= null && urls.size() >0) {
 
@@ -63,7 +94,7 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
             } else {
                 svh.mImage.setVisibility(View.GONE);
             }
-            svh.mTitle.setText(mDetailTheme.getStories().get(position-1).getTitle());
+            svh.mTitle.setText(mDetailTheme.getStories().get(position - 1).getTitle());
         } else if (type == 0) {
             StoryRecyclerViewAdapter.StoryViewHolder ovh = (StoryRecyclerViewAdapter.StoryViewHolder) holder;
             Utils.loadImage(mDetailTheme.getBackground(), ovh.mImage);

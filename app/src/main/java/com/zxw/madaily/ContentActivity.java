@@ -1,5 +1,6 @@
 package com.zxw.madaily;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,8 +45,10 @@ import java.util.EventListener;
 import java.util.List;
 
 
-public class ContentActivity extends AppCompatActivity {
+public class ContentActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private int shortComments;
+    private int longComments;
     private int id;
     private Content mContent;
     private Extra mExtra;
@@ -54,6 +57,7 @@ public class ContentActivity extends AppCompatActivity {
     private WebView mWebView;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private TextView mCopyRight;
+    private TextView mComments, mPopularity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,9 +74,14 @@ public class ContentActivity extends AppCompatActivity {
         initView();
 
         loadMessage();
+        loadComments();
     }
 
     private void initView() {
+
+        mComments = (TextView) findViewById(R.id.tv_comments);
+        mComments.setOnClickListener(this);
+        mPopularity = (TextView) findViewById(R.id.tv_popularity);
 
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
@@ -151,7 +160,7 @@ public class ContentActivity extends AppCompatActivity {
 
         StringRequest commentRequest = new StringRequest(
                 Request.Method.GET,
-                Urls.BASE_URL + Urls.NEWS + id,
+                Urls.BASE_URL + Urls.STORY_EXTRA + id,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -159,8 +168,8 @@ public class ContentActivity extends AppCompatActivity {
                         mExtra = gson.fromJson(response, Extra.class);
 
                         if (mExtra != null) {
-
-
+                            mComments.setText(String.valueOf(mExtra.getComments()));
+                            mPopularity.setText(String.valueOf(mExtra.getPopularity()));
                         }
 
                     }
@@ -292,5 +301,22 @@ public class ContentActivity extends AppCompatActivity {
         super.onDestroy();
         mWebView.clearCache(true);
         DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.tv_comments:
+                Intent intent = new Intent(this, CommentActivity.class);
+                intent.putExtra("id",id);
+
+                if (mExtra != null) {
+                    intent.putExtra("long", mExtra.getLong_comments());
+                    intent.putExtra("short", mExtra.getShort_comments());
+                }
+                startActivity(intent);
+                break;
+        }
     }
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="15dp"
+    android:paddingRight="15dp"
+    android:paddingLeft="15dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/cv_face"
+        android:src="@mipmap/ic_launcher"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_like"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"/>
+
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_toLeftOf="@id/tv_like"
+        android:layout_alignTop="@id/tv_like"
+        android:src="@drawable/ic_like"
+        android:layout_marginRight="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_author"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@+id/cv_face"
+        android:layout_toLeftOf="@id/tv_like"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@android:color/black"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_author"
+        android:layout_alignLeft="@id/tv_author"
+        android:layout_alignParentRight="true"
+        android:id="@+id/tv_content"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/darker_gray"
+        android:id="@+id/tv_time"
+        android:layout_alignLeft="@id/tv_content"
+        android:layout_below="@id/tv_content"
+        android:layout_marginTop="10dp"/>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@id/tv_time"
+        android:layout_marginTop="15dp"/>
+
+</RelativeLayout>

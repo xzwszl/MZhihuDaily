@@ -34,6 +34,8 @@ public class MainFragment extends Fragment{
     private StoryRecyclerViewAdapter mStoryRecyclerViewAdapter;
     private Gson gson;
 
+    private boolean loading;
+
     private LatestNews mLn;
     @Override
     public void onCreate(Bundle savedInstanceState) {

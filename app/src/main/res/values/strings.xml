@@ -10,6 +10,7 @@
     <string name="app_home">首页</string>
     <string name="offline_download">离线下载</string>
     <string name="my_setting">我的设置</string>
+    <string name="default_num">...</string>
 
 
     <color name="window_background">#FFF5F5F5</color>
@@ -18,6 +19,9 @@
     <color name="blue">#000099</color>
     <color name="half_black">#8F000000</color>
     <color name="hard_black">#AF000000</color>
+
+    <color name="half_primary">#8F0893AD</color>
+    <color name="hard_primary">#AF0893AD</color>
     <string name="title_activity_content">ContentActivity</string>
 
     <string name="hello_world">Hello world!</string>

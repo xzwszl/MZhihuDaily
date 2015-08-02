@@ -1,7 +1,5 @@
 package com.zxw.madaily.adapter;
 
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,11 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.zxw.madaily.R;
 import com.zxw.madaily.entity.Story;
 import com.zxw.madaily.http.Utils;
 
@@ -35,6 +28,14 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         this.mStories = stories;
         this.mTops = tops;
         this.mOnItemSelectedLinstener = linstener;
+    }
+
+    public void addStories(List<Story> stories) {
+
+        if (stories == null) throw  new NullPointerException();
+        if (mStories == null) mStories = stories;
+        else
+            mStories.addAll(stories);
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -96,8 +97,14 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
 
 
+
     @Override
     public int getItemCount() {
+
+        if (mStories == null) return 1;
+
+        String date = null;
+
         return mStories == null ? 1 : mStories.size() + 1;
     }
 
