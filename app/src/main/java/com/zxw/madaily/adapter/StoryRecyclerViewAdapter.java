@@ -7,11 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.zxw.madaily.R;
+import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.entity.Story;
 import com.zxw.madaily.http.Utils;
+import com.zxw.madaily.tool.DataUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.acl.LastOwnerException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,24 +26,30 @@ import java.util.List;
  */
 public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private List<Story> mStories;
-    private List<Story> mTops;
+    private List<LatestNews> mNews;
+
     private static  TopStoryAdapter mTopAdapter;
     private OnItemSelectedLinstener mOnItemSelectedLinstener;
 
-    public StoryRecyclerViewAdapter(List<Story> stories, List<Story> tops, OnItemSelectedLinstener linstener){
-        this.mStories = stories;
-        this.mTops = tops;
+    public StoryRecyclerViewAdapter(List<LatestNews> news, OnItemSelectedLinstener linstener){
+        this.mNews = news;
         this.mOnItemSelectedLinstener = linstener;
     }
 
-    public void addStories(List<Story> stories) {
+    public void addNews(LatestNews news) {
 
-        if (stories == null) throw  new NullPointerException();
-        if (mStories == null) mStories = stories;
-        else
-            mStories.addAll(stories);
+        if (news == null) throw  new NullPointerException();
+        if (mNews == null) {
+            mNews = new ArrayList<>();
+        }
+
+        mNews.add(news);
     }
+
+    public List<LatestNews> getmNews() {
+        return mNews;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -57,11 +70,13 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             return holder;
         } else if (viewType == 0) {
 
-            if (mTopAdapter == null) mTopAdapter = new TopStoryAdapter(parent.getContext(),mTops);
+            if (mTopAdapter == null && mNews != null && mNews.size()> 0) mTopAdapter = new TopStoryAdapter(parent.getContext(), mNews.get(0).getTop_stories());
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewpager_top, parent, false);
             return new TopViewHolder(view);
         } else {
-            return null;
+
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_type, parent, false);
+            return new DateViewHodler(view);
         }
     }
 
@@ -71,8 +86,43 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     public int getItemViewType(int position) {
 
         if (position == 0) return 0;
-        return 1;
 
+        int count = 0;
+
+        for (LatestNews news : mNews) {
+
+            count++;
+
+            if (count == position) return 2;
+            else if (count >= position) return 1;
+
+            count += news.getStories() == null ? 0 : news.getStories().size();
+        }
+
+        return 1;
+    }
+
+    public Object getOjbect(int position){
+
+        int count = 0;
+
+        for(LatestNews news : mNews) {
+            count++;
+
+            if (count == position) {
+                return news.getDate();
+            }
+
+            int size = news.getStories() == null ? 0 : news.getStories().size();
+
+            if (count + size >= position) {
+                return news.getStories().get(position - count - 1);
+            }
+
+            count += size;
+        }
+
+       return null;
     }
 
     @Override
@@ -85,30 +135,53 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
          //   TopViewHolder tholder = (TopViewHolder) holder;
 
         } else if (type == 1){
-            ((StoryViewHolder) holder).mTitle.setText(mStories.get(position-1).getTitle());
+
+            Story story = (Story) getOjbect(position);
+            ((StoryViewHolder) holder).mTitle.setText(story.getTitle());
             //   holder.mImage.setImageDrawable(null);
-            List<String> urls = mStories.get(position-1).getImages();
+            List<String> urls = story.getImages();
 
             if (urls!= null && urls.size() >0) {
 
                 Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
             }
+        } else {
+
+            String date = (String) getOjbect(position);
+            if (position == 1)
+                ((DateViewHodler)holder).mDate.setText("今日要闻");
+            else
+                ((DateViewHodler)holder).mDate.setText(DataUtils.getStoryTitle(date));
         }
-        }
+    }
 
 
 
     @Override
     public int getItemCount() {
 
-        if (mStories == null) return 1;
+        if (mNews == null) return 0;
 
-        String date = null;
+        int count = mNews.size() + 1;
 
-        return mStories == null ? 1 : mStories.size() + 1;
+        for (LatestNews news : mNews) {
+            count += news.getStories() == null ? 0 :news.getStories().size();
+        }
+
+        return count;
     }
 
 
+    public static class DateViewHodler extends RecyclerView.ViewHolder {
+
+        public final TextView mDate;
+
+        public DateViewHodler(View itemView) {
+            super(itemView);
+
+            mDate = (TextView) itemView;
+        }
+    }
 
     public static class StoryViewHolder extends RecyclerView.ViewHolder{
 

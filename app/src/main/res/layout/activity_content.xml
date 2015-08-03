@@ -107,7 +107,7 @@
         android:layout_width="wrap_content"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ic_share"
         android:layout_margin="20dp"
         android:clickable="true"/>
 

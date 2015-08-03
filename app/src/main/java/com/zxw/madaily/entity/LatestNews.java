@@ -3,7 +3,7 @@ package com.zxw.madaily.entity;
 import java.util.List;
 
 /**
- * Created by v-lesh on 7/22/2015.
+ * Created by xzwszl on 7/22/2015.
  */
 public class LatestNews {
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +23,10 @@ import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.LatestNews;
+import com.zxw.madaily.entity.Story;
 import com.zxw.madaily.view.TopSwipeRefreshLayout;
+
+import java.util.List;
 
 /**
  * Created by xzwszl on 7/22/2015.
@@ -36,7 +40,6 @@ public class MainFragment extends Fragment{
 
     private boolean loading;
 
-    private LatestNews mLn;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +71,22 @@ public class MainFragment extends Fragment{
     }
 
     private void init(){
+        setupSwipeRefresh();
+        setupRecyclerView();
         gson = new Gson();
-        loadingData();
+
+        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(null, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
+            @Override
+            public void select(View view, int position) {
+                Intent intent = new Intent(getActivity(), ContentActivity.class);
+                intent.putExtra("id", ((Story) mStoryRecyclerViewAdapter.getOjbect(position)).getId());
+                startActivity(intent);
+            }
+        });
+
+        mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
+
+        loadData(Urls.LASTEST);
     }
 
     private void initView(View root) {
@@ -89,34 +106,72 @@ public class MainFragment extends Fragment{
 
     }
 
-    private void loadingData() {
+    private void setupSwipeRefresh() {
+        mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mRefresh.setRefreshing(true);
+                loadData(Urls.LASTEST);
+                mRefresh.setRefreshing(false);
+            }
+        });
+    }
 
+    private void setupRecyclerView() {
+
+        mNewsRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                if (!loading && dy > 0) {
+
+                    int count = mStoryRecyclerViewAdapter.getItemCount();
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) mNewsRV.getLayoutManager();
+                    if (layoutManager.findLastCompletelyVisibleItemPosition() == count - 1) {
+                        List<LatestNews> news = mStoryRecyclerViewAdapter.getmNews();
+                        if (news != null && news.size() > 0) {
+                            loadData("before/" + news.get(news.size()-1).getDate());
+                        }
+
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+    }
+
+    private void loadData(String type) {
+
+
+        loading = true;
         StringRequest storyRequest = new StringRequest(
                 Request.Method.GET,
-                Urls.BASE_URL + Urls.NEWS + Urls.LASTEST,
+                Urls.BASE_URL + Urls.NEWS + type,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
-                        mLn = gson.fromJson(response, LatestNews.class);
+                        LatestNews news  = gson.fromJson(response, LatestNews.class);
 
-                        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(mLn.getStories(), mLn.getTop_stories(), new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
-                            @Override
-                            public void select(View view, int position) {
-                                Intent intent = new Intent(getActivity(), ContentActivity.class);
-                                intent.putExtra("id", mLn.getStories().get(position-1).getId());
-                                startActivity(intent);
-                            }
-                        });
+                        if (news != null) {
+                            mStoryRecyclerViewAdapter.addNews(news);
+                            mStoryRecyclerViewAdapter.notifyDataSetChanged();
+                        }
 
-                        mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
+                        loading = false;
+
                     }
                 },
                 new  Response.ErrorListener(){
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        loading = false;
                     }
                 }
 

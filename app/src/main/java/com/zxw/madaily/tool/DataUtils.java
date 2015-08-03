@@ -69,4 +69,9 @@ public class DataUtils {
 
         return format.format(date);
     }
+
+    public static String getStoryTitle(String title) {
+
+        return title.substring(0,4) + "-" +title.substring(4,6) + "-" +title.substring(6);
+    }
 }
