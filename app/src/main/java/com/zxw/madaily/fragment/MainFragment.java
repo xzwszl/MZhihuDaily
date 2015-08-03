@@ -130,7 +130,7 @@ public class MainFragment extends Fragment{
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == count - 1) {
                         List<LatestNews> news = mStoryRecyclerViewAdapter.getmNews();
                         if (news != null && news.size() > 0) {
-                            loadData("before/" + news.get(news.size()-1).getDate());
+                            loadData("before/" + news.get(news.size() - 1).getDate());
                         }
 
                     }
@@ -145,7 +145,7 @@ public class MainFragment extends Fragment{
         });
     }
 
-    private void loadData(String type) {
+    private void loadData(final String type) {
 
 
         loading = true;
@@ -159,7 +159,14 @@ public class MainFragment extends Fragment{
                         LatestNews news  = gson.fromJson(response, LatestNews.class);
 
                         if (news != null) {
-                            mStoryRecyclerViewAdapter.addNews(news);
+
+                            if (type.equals(Urls.LASTEST)) {
+
+                                mStoryRecyclerViewAdapter.addFirstNews(news);
+                            } else {
+                                mStoryRecyclerViewAdapter.addNews(news);
+                            }
+
                             mStoryRecyclerViewAdapter.notifyDataSetChanged();
                         }
 

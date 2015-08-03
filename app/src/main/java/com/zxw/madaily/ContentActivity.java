@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -82,19 +83,12 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         mBackDrop = (ImageView) findViewById(R.id.backdrop);
         mWebView = (WebView) findViewById(R.id.wv_content);
-//        mWebView.setWebViewClient(new WebViewClient() {
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                super.onPageFinished(view, url);
-//
-//                mWebView.getSettings().setLoadsImagesAutomatically(true);
-//            }
-//        });
         WebSettings settings = mWebView.getSettings();
         settings.setDefaultTextEncodingName("utf-8");
 //        settings.setLoadsImagesAutomatically(false);
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
+        mWebView.addJavascriptInterface(new JsInteration(), "control");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -217,8 +211,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 "text/html",
                 "charset=utf-8",
                 null);
-
-       //mWebView.loadUrl("javascript:");
     }
 
     public void downloadImage(String url){
@@ -309,6 +301,23 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 startActivity(intent);
                 break;
+        }
+    }
+
+    public class JsInteration {
+
+        @JavascriptInterface
+        public void displayImage(String url) {
+
+            Intent intent = new Intent(ContentActivity.this, ImageActivity.class);
+            intent.putExtra("url",url);
+
+            startActivity(intent);
+        }
+
+        @JavascriptInterface
+        public void loadImage(String url) {
+            ContentActivity.this.loadImage(url);
         }
     }
 }

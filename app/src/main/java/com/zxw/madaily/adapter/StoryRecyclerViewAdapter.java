@@ -16,9 +16,7 @@ import com.zxw.madaily.tool.DataUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +32,16 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     public StoryRecyclerViewAdapter(List<LatestNews> news, OnItemSelectedLinstener linstener){
         this.mNews = news;
         this.mOnItemSelectedLinstener = linstener;
+    }
+
+    public void addFirstNews(LatestNews news) {
+
+        if (mNews == null) {
+            mNews = new ArrayList<>();
+        } else {
+            mNews.clear();
+        }
+        mNews.add(news);
     }
 
     public void addNews(LatestNews news) {

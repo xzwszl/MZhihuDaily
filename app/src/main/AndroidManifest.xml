@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".DailyApplication"
@@ -21,13 +21,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".SplashActivity" >
-
         </activity>
         <activity
             android:name=".ContentActivity"
             android:label="@string/title_activity_content" >
         </activity>
-        <activity android:name=".CommentActivity"></activity>
+        <activity android:name=".CommentActivity" />
+        <activity
+            android:name=".ImageActivity"
+            android:label="@string/title_activity_image" >
+        </activity>
     </application>
 
 </manifest>
