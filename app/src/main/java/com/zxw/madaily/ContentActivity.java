@@ -2,6 +2,7 @@ package com.zxw.madaily;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -12,8 +13,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,6 +54,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private TextView mCopyRight;
     private TextView mComments, mPopularity;
+
+    //private List<String> imageUrls;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +94,22 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 //        settings.setLoadsImagesAutomatically(false);
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         mWebView.addJavascriptInterface(new JsInteration(), "control");
+        mWebView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                mWebView.loadUrl("javascript:onLoaded()");
+            }
+        });
+
+        mWebView.setWebChromeClient(new WebChromeClient());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -176,11 +197,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         if (TextUtils.isEmpty(content)) return;
 
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-        {
-            List<String> imageUrls = DataUtils.filterString("<img", "src", content);
+      //  if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+       // {
+         //       imageUrls = DataUtils.filterString("<img", "src", content);
 
-            if (imageUrls != null && imageUrls.size() > 0) {
+           // if (imageUrls != null && imageUrls.size() > 0) {
 
                // HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
 
@@ -193,20 +214,22 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
           //      String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
 
 
-                for (String iu : imageUrls) {
+//                for (String iu : imageUrls) {
 
-                  //  String filepath = "file://" + basePath + "/" +  fsg.generate(iu);
+//                    String filepath = "file://" + basePath + "/" +  fsg.generate(iu);
+//
+//                    sds.add(filepath);
+//                    downloadImage(iu);//loadImage(iu, new ImageView(this));
+//                }
 
-                 //   sds.add(filepath);
-                    downloadImage(iu);//loadImage(iu, new ImageView(this));
-                }
              //   content = DataUtils.replaceString(content, imageUrls, sds);
 
-            }
-        }
+          //  }
+       // }
 
+        content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
         mWebView.loadDataWithBaseURL("file:///android_asset/",
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body onLoad=\"onLoad()\">" + content + "</body></html>",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body >" + content + "</body></html>",
                 //"<html><body><img src=\"" + Environment.getExternalStorageDirectory().toString() + "/MADaily/cache/image/-1472368281" + "\"></body></html>",
                 "text/html",
                 "charset=utf-8",
@@ -234,15 +257,21 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+            public void onLoadingComplete(final String imageUri, View view, Bitmap loadedImage) {
 
                 HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
 
                 String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(), "MADaily/cache/image").getPath();
 
-                String filepath = "file://" + basePath + "/" + fsg.generate(imageUri);
+                final String filepath = "file://" + basePath + "/" + fsg.generate(imageUri);
 
-                mWebView.loadUrl("javascript:showImage('" + imageUri + "','" + filepath + "')");
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWebView.loadUrl("javascript:showImage('" + imageUri + "','" + filepath + "')");
+                        mWebView.requestLayout();
+                    }
+                });
             }
 
             @Override
@@ -272,7 +301,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            item.setTitle("10");
             return true;
         }
 
@@ -317,7 +345,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         @JavascriptInterface
         public void loadImage(String url) {
-            ContentActivity.this.loadImage(url);
+            downloadImage(url);
         }
     }
 }
