@@ -17,12 +17,24 @@ import java.util.zip.Inflater;
 public class ThemeAdapter extends BaseAdapter{
 
     private List<Theme> mThemes;
+
+    private int currentpos = 0;
+
   //  private Context mContext;
 
     public ThemeAdapter(List<Theme> themes){
 
    //     this.mContext = context;
         this.mThemes = themes;
+    }
+
+    public void setSelectedPos(int pos) {
+        currentpos = pos;
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedPos() {
+        return currentpos+1;
     }
     @Override
     public int getCount() {
@@ -48,13 +60,37 @@ public class ThemeAdapter extends BaseAdapter{
             convertView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.themes_item, parent, false);
         }
 
-        ((TextView)convertView).setText(mThemes.get(position).getName());
 
+        int type = getItemViewType(position);
+
+        if (type == 0) {
+            ((TextView)convertView).setText("首页");
+        } else {
+            ((TextView)convertView).setText(mThemes.get(position-1).getName());
+        }
+
+        if (position == currentpos) {
+            convertView.setBackgroundColor(parent.getResources().getColor(android.R.color.secondary_text_dark));
+        } else {
+            convertView.setBackgroundColor(parent.getResources().getColor(android.R.color.white));
+        }
 
         return convertView;
     }
 
-//    static class ViewHolder{
+    @Override
+    public int getItemViewType(int position) {
+
+        if (position == 0) return 0;
+        else return 1;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    //    static class ViewHolder{
 //        TextView tv;
 //    }
 }

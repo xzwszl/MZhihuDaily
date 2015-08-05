@@ -38,7 +38,7 @@
         android:layout_toRightOf="@+id/cv_face"
         android:layout_toLeftOf="@id/tv_like"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="26dp"
         android:textColor="@android:color/black"/>
 
     <TextView

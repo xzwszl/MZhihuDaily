@@ -101,7 +101,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                mWebView.loadUrl("javascript:onLoaded()");
+              //  mWebView.loadUrl("javascript:onLoaded()");
             }
         });
 
@@ -229,7 +229,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
         mWebView.loadDataWithBaseURL("file:///android_asset/",
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body >" + content + "</body></html>",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body onLoad=\"onLoaded()\">" + content + "</body></html>",
                 //"<html><body><img src=\"" + Environment.getExternalStorageDirectory().toString() + "/MADaily/cache/image/-1472368281" + "\"></body></html>",
                 "text/html",
                 "charset=utf-8",
@@ -339,7 +339,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
             Intent intent = new Intent(ContentActivity.this, ImageActivity.class);
             intent.putExtra("url",url);
-
+            intent.putExtra("title", mContent != null ? mContent.getTitle() : null);
             startActivity(intent);
         }
 

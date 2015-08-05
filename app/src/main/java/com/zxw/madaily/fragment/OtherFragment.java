@@ -40,7 +40,7 @@ public class OtherFragment extends Fragment {
     private Gson gson;
 
     private boolean loading;
-
+    private String title;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +55,15 @@ public class OtherFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        String t = bundle.getString("title");
+
+        if (t != null) {
+            title = t;
+            getActivity().setTitle(title);
+        }
+
         init();
     }
 

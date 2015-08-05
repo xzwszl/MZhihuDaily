@@ -60,6 +60,7 @@ public class MainFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        getActivity().setTitle("知乎日报");
         init();
     }
 
@@ -85,6 +86,8 @@ public class MainFragment extends Fragment{
         });
 
         mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
+
+        if (mStoryRecyclerViewAdapter != null &&mStoryRecyclerViewAdapter.getmNews() !=null) return;
 
         loadData(Urls.LASTEST);
     }

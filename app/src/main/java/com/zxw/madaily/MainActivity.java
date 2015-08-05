@@ -1,27 +1,20 @@
 package com.zxw.madaily;
 
-import android.app.DownloadManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -32,7 +25,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
-import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.DailyTheme;
 import com.zxw.madaily.entity.Theme;
 import com.zxw.madaily.fragment.MainFragment;
@@ -82,9 +74,28 @@ public class MainActivity extends AppCompatActivity {
 
                 mDrawerLayout.closeDrawers();
 
-                if (position == 0) return;
+                int currentPos = mThemeAdapter.getSelectedPos();
 
-                Theme theme = (Theme) mThemeAdapter.getItem(position - 1);
+                if (position == 0 || position == currentPos) return;
+
+                mThemeAdapter.setSelectedPos(position-1);
+
+                if (position == 1) {
+
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                    if (mMainFragment == null) {
+                        mMainFragment = new MainFragment();
+                    }
+                    ft.replace(R.id.container, mMainFragment, "main");
+                    ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
+
+                    ft.commit();
+
+                    return;
+                }
+
+                Theme theme = (Theme) mThemeAdapter.getItem(position - 2);
 
                 if (mOtherFragment != null && String.valueOf(theme.getId()).equals(mOtherFragment.getTag())) {
                     return;
@@ -93,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
                 mOtherFragment = new OtherFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
+                Bundle bundle = new Bundle();
+                bundle.putString("title", theme.getName());
+                mOtherFragment.setArguments(bundle);
                 ft.replace(R.id.container, mOtherFragment, String.valueOf(theme.getId()));
                 ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
 
