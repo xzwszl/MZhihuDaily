@@ -13,6 +13,7 @@
     <string name="default_num">...</string>
 
 
+    <color name="indicator_white">#AAA</color>
     <color name="window_background">#FFF5F5F5</color>
     <color name="orange">#FF9900</color>
     <color name="green">#009900</color>

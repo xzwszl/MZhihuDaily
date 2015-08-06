@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Libray/Libray.iml" filepath="$PROJECT_DIR$/Libray/Libray.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Libray/Libray.iml" filepath="$PROJECT_DIR$/Libray/Libray.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Libray/Libray.iml" filepath="$PROJECT_DIR$/Libray/Libray.iml" />
       <module fileurl="file://$PROJECT_DIR$/MZhihuDaily.iml" filepath="$PROJECT_DIR$/MZhihuDaily.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

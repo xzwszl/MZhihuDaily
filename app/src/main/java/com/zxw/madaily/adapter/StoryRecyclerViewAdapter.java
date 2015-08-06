@@ -15,6 +15,7 @@ import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.entity.Story;
 import com.zxw.madaily.http.Utils;
 import com.zxw.madaily.tool.DataUtils;
+import com.zxw.madaily.view.IndicatorView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -210,12 +211,14 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         public final ViewPager mViewPager;
         public final TextView mTitle;
+        public final IndicatorView mIndicator;
 
         public TopViewHolder(View itemView) {
             super(itemView);
 
             mViewPager = (ViewPager) itemView.findViewById(R.id.vp_top);
             mTitle = (TextView) itemView.findViewById(R.id.tv_top_title);
+            mIndicator = (IndicatorView) itemView.findViewById(R.id.idv_indicator);
 
             dealWithViewPager(mViewPager, mTitle);
         }
@@ -225,7 +228,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int i, float v, int i1) {
-                    Log.e("onPageScrolled", "from " + i + " to " + i1 + " dis = "+v);
+                    mIndicator.setLoacation(i,v);
                 }
 
                 @Override
