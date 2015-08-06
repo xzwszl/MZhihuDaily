@@ -2,11 +2,13 @@ package com.zxw.madaily.adapter;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.LatestNews;
@@ -223,7 +225,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int i, float v, int i1) {
-                    int aa = 100;
+                    Log.e("onPageScrolled", "from " + i + " to " + i1 + " dis = "+v);
                 }
 
                 @Override
