@@ -14,12 +14,15 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.JsonObject;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.tool.FileUtils;
+import com.zxw.madaily.tool.ViewUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,22 +64,27 @@ public class SplashActivity extends AppCompatActivity{
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        try {
-                            if (response.has("img"))
-                                loadImage(response.getString("img"));
-
-                            if (response.has("text"))
-                                mText.setText(response.getString("text"));
-
-                        } catch ( JSONException je){
-
-                        }
-
+                        dealWithResponse(response);
+                        FileUtils.saveResonse(Urls.LOCAL_SPLASH, response.toString());
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
+                        String response = FileUtils.getResponse(Urls.LOCAL_SPLASH);
+
+                        if (response == null) {
+                            ViewUtils.showMessage(getApplication(), getString(R.string.network_error));
+                            return;
+                        }
+                        try {
+
+                            dealWithResponse(new JSONObject(response));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                     }});
 
@@ -186,5 +194,19 @@ public class SplashActivity extends AppCompatActivity{
 
         DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
 
+    }
+
+    private void dealWithResponse(JSONObject response) {
+        try {
+            if (response.has("img"))
+                loadImage(response.getString("img"));
+
+            if (response.has("text"))
+                mText.setText(response.getString("text"));
+
+
+        } catch ( JSONException je){
+
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.zxw.madaily.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.support.v4.view.PagerAdapter;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.entity.Story;
 
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ public class TopStoryAdapter extends PagerAdapter{
     private List<Story> mTopStories;
     private List<ImageView> mTopViews;
 
-    public TopStoryAdapter(Context context, List<Story> topStories){
+    public TopStoryAdapter(final Context context, List<Story> topStories){
         this.mTopStories = topStories;
 
         if (topStories != null) {
@@ -36,6 +38,17 @@ public class TopStoryAdapter extends PagerAdapter{
                 imageview.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 mTopViews.add(imageview);
+
+                final int finalI = i;
+                imageview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(context, ContentActivity.class);
+                        intent.putExtra("id", mTopStories.get(finalI).getId());
+                        context.startActivity(intent);
+                    }
+                });
 
                 loadImage(mTopStories.get(i).getImage(), imageview);
             }

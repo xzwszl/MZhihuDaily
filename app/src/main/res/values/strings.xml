@@ -12,6 +12,8 @@
     <string name="my_setting">我的设置</string>
     <string name="default_num">...</string>
 
+    <string name="network_error">将检查网络连接</string>
+
 
     <color name="indicator_white">#AAA</color>
     <color name="window_background">#FFF5F5F5</color>
@@ -27,4 +29,16 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_image">ImageActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+
+
+    <string name="normal_set">常规</string>
+    <string name="auto_download">自动离线下载</string>
+    <string name="auto_download_tips">仅在wifi下可用，自动下载最新内容</string>
+    <string name="no_picture">无图模式</string>
+    <string name="no_picture_tips">2G/3G网络下不下载图片</string>
+    <string name="other_set">其他</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="version_check">版本检查</string>
+
 </resources>

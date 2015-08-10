@@ -228,7 +228,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int i, float v, int i1) {
-                    mIndicator.setLoacation(i,v);
+                    mIndicator.setLoacation(i, v);
                 }
 
                 @Override

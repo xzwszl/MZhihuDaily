@@ -24,4 +24,9 @@ public interface Urls {
     String LONG_COMMENT = "long-comments";
 
     String SHORT_COMMENT = "short-comments";
+
+
+    String LOCAL_SPLASH = "splash";
+
+    String LOCAL_THEME = "theme";
 }

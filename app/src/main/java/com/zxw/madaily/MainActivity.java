@@ -1,5 +1,6 @@
 package com.zxw.madaily;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import com.zxw.madaily.entity.DailyTheme;
 import com.zxw.madaily.entity.Theme;
 import com.zxw.madaily.fragment.MainFragment;
 import com.zxw.madaily.fragment.OtherFragment;
+import com.zxw.madaily.tool.FileUtils;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mThemesListView;
     private NavigationView mNavigationView;
-    private ViewPager mViewPager;
+    private View headView;
     private ThemeAdapter mThemeAdapter;
     private Gson gson;
 
@@ -58,6 +60,19 @@ public class MainActivity extends AppCompatActivity {
         initView();
         gson = new Gson();
         loadTheme();
+    }
+
+    private void initHeaderView() {
+
+        headView = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
+
+        headView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
     }
 
     private void initView(){
@@ -196,8 +211,9 @@ public class MainActivity extends AppCompatActivity {
             }
             ft.replace(R.id.container, mMainFragment, "main");
             ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
-
             ft.commit();
+
+            mThemeAdapter.setSelectedPos(0);
         }
     }
 
@@ -220,6 +236,8 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.action_settings:
+                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
                 break;
         }
        // int id = item.getItemId();
@@ -234,6 +252,13 @@ public class MainActivity extends AppCompatActivity {
 
     private  void loadTheme(){
 
+        String response = FileUtils.getResponse(Urls.LOCAL_THEME);
+
+        if (response != null) {
+
+            parseResponse(response);
+        }
+
         StringRequest themeRequest = new StringRequest(
                 Request.Method.GET,
                 Urls.BASE_URL + Urls.THEMES,
@@ -241,10 +266,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
 
-                        DailyTheme dt = gson.fromJson(response, DailyTheme.class);
-                        mThemeAdapter = new ThemeAdapter(dt.getOthers());
-                        mThemesListView.setAdapter(mThemeAdapter);
+                        parseResponse(response);
 
+                        FileUtils.saveResonse(Urls.LOCAL_THEME,response);
                //         mNavigationView.invalidate();
                     }
                 },
@@ -257,6 +281,12 @@ public class MainActivity extends AppCompatActivity {
         );
         themeRequest.setTag(this.getLocalClassName());
         DailyApplication.mInstance.getVolleyQueue().add(themeRequest);
+    }
+
+    private void parseResponse(String response) {
+        DailyTheme dt = gson.fromJson(response, DailyTheme.class);
+        mThemeAdapter = new ThemeAdapter(dt.getOthers());
+        mThemesListView.setAdapter(mThemeAdapter);
     }
 
 
