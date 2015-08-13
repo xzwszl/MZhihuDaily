@@ -269,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
                         parseResponse(response);
 
                         FileUtils.saveResonse(Urls.LOCAL_THEME,response);
+
+
                //         mNavigationView.invalidate();
                     }
                 },
