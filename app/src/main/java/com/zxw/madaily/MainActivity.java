@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +27,17 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.db.TableHandler;
+import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.DailyTheme;
+import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.entity.Theme;
 import com.zxw.madaily.fragment.MainFragment;
 import com.zxw.madaily.fragment.OtherFragment;
+import com.zxw.madaily.http.Utils;
 import com.zxw.madaily.tool.FileUtils;
+
+import java.security.acl.LastOwnerException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,13 +45,11 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mThemesListView;
     private NavigationView mNavigationView;
-    private View headView;
     private ThemeAdapter mThemeAdapter;
     private Gson gson;
 
     private MainFragment mMainFragment;
     private OtherFragment mOtherFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,23 +61,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
-
         initView();
         gson = new Gson();
         loadTheme();
-    }
-
-    private void initHeaderView() {
-
-        headView = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
-
-        headView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-            }
-        });
     }
 
     private void initView(){
@@ -159,38 +150,6 @@ public class MainActivity extends AppCompatActivity {
         ft.replace(R.id.container,mMainFragment,"main");
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         ft.commit();
-//
-//        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-//
-//        mViewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
-//            @Override
-//            public Fragment getItem(int position) {
-//
-//                switch (position){
-//                    case 0:
-//                        if (mMainFragment == null) {
-//                            mMainFragment = new MainFragment();
-//                        }
-//                        return mMainFragment;
-//                    default:
-//                        return mMainFragment;
-//                }
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return 1;
-//            }
-//
-//        });
-
-//        Menu menu = mNavigationView.getMenu();
-//        menu.add("12");
-//        menu.add("22");
-//
-//        menu.getItem(1).setActionView(R.layout.nav_header);
-//
-//        MenuItemCompat.setActionView(menu.findItem(R.id.action_settings), R.layout.nav_header);
     }
 
     @Override
@@ -240,13 +199,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
         }
-       // int id = item.getItemId();
-
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -255,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
         String response = FileUtils.getResponse(Urls.LOCAL_THEME);
 
         if (response != null) {
-
             parseResponse(response);
+            return;
         }
 
         StringRequest themeRequest = new StringRequest(
@@ -291,14 +243,10 @@ public class MainActivity extends AppCompatActivity {
         mThemesListView.setAdapter(mThemeAdapter);
     }
 
-
     @Override
     protected void onDestroy() {
 
         DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
-
         super.onDestroy();
     }
-
-
 }

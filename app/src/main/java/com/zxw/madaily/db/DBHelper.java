@@ -14,24 +14,24 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     //news table
     private static final String CREATE_NEWS_TABLE = "CREATE TABLE table_news(" +
-            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "date VARCHAR(50) NOT NULL," +
+            "date VARCHAR(20) PRIMARY KEY NOT NULL," +
             "content TEXT NOT NULL);";
 
     //themes table
     private static final String CREATE_THEME_TABLE = "CREATE TABLE table_themes(" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "tid INTEGER NOT NULL," +
+            "kid INTEGER NOT NULL," +
             "content TEXT NOT NULL);";
 
     //content table
     private static final String CREATE_CONTENT_TABLE = "CREATE TABLE table_content(" +
-            "id INTEGER PRIMARY KEY AUTOCREMENT," +
-            "cid INTEGER NOT NULL," +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "kid INTEGER NOT NULL," +
             "content TEXT NOT NULL);";
 
-
-
+    public DBHelper(Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
+    }
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DB_NAME, null, DB_VERSION);
     }

@@ -1,13 +1,13 @@
 package com.zxw.madaily.fragment;
 
 import android.content.Intent;
-import android.nfc.cardemulation.OffHostApduService;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +17,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.adapter.OtherRecyclerViewAdapter;
 import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.db.TableHandler;
 import com.zxw.madaily.entity.DetailTheme;
 import com.zxw.madaily.entity.Story;
+import com.zxw.madaily.http.Utils;
+import com.zxw.madaily.tool.ViewUtils;
 import com.zxw.madaily.view.TopSwipeRefreshLayout;
 
 import java.util.List;
@@ -41,6 +45,8 @@ public class OtherFragment extends Fragment {
 
     private boolean loading;
     private String title;
+
+    private TableHandler mTableHandler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +69,6 @@ public class OtherFragment extends Fragment {
             title = t;
             getActivity().setTitle(title);
         }
-
         init();
     }
 
@@ -87,6 +92,8 @@ public class OtherFragment extends Fragment {
         gson = new Gson();
         setupSwipeRefresh();
         setupRecyclerView();
+
+        mTableHandler = new TableHandler(getActivity(), TableHandler.TABLE_THEMES);
         loadData("");
     }
 
@@ -116,7 +123,7 @@ public class OtherFragment extends Fragment {
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == count - 1) {
                         loading = true;
 
-                        int id = stories.get(count -1).getId();
+                        int id = stories.get(count - 1).getId();
 
                         loadData("/before/" + id);
                     }
@@ -141,42 +148,63 @@ public class OtherFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
 
-                        final DetailTheme dt = gson.fromJson(response, DetailTheme.class);
-
-                        if (mOAdapter == null) {
-                            mOAdapter = new OtherRecyclerViewAdapter(dt, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
-                                @Override
-                                public void select(View view, int position) {
-                                    Intent intent = new Intent(getActivity(), ContentActivity.class);
-                                    intent.putExtra("id", dt.getStories().get(position-1).getId());
-                                    startActivity(intent);
-                                }
-                            });
-                            mRecyclerView.setAdapter(mOAdapter);
-                        } else {
-                            if (dt != null){
-                                if (before.equals("")) {
-                                    mOAdapter.setmDetailTheme(dt);
-                                } else if ( dt.getStories() != null) {
-                                    mOAdapter.addStories(dt.getStories());
-                                    mOAdapter.notifyDataSetChanged();
-                                }
-
-                            }
+                        if ( pareseResponse(before, response) && before.equals("")) {
+                            mTableHandler.updateContentByIdy(OtherFragment.this.getTag(),response);
                         }
-                        loading = false;
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        ViewUtils.showMessage(getActivity(), getString(R.string.network_error));
                         loading = false;
                     }
                 }
         );
-
         dtRequest.setTag(this.getTag());
-        DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
+
+        if (Utils.isWifiAvailable(getActivity())) {
+            DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
+        } else if (before.equals("")) {
+
+            // 优先使用数据库
+            String content = mTableHandler.findContentById(this.getTag());
+
+            if (TextUtils.isEmpty(content)) {
+                pareseResponse("", content);
+            }
+        }
+    }
+
+    private boolean  pareseResponse(String before, String response) {
+        try {
+            final DetailTheme dt = gson.fromJson(response, DetailTheme.class);
+            if (mOAdapter == null) {
+                mOAdapter = new OtherRecyclerViewAdapter(dt, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
+                    @Override
+                    public void select(View view, int position) {
+                        Intent intent = new Intent(getActivity(), ContentActivity.class);
+                        intent.putExtra("id", dt.getStories().get(position-1).getId());
+                        startActivity(intent);
+                    }
+                });
+                mRecyclerView.setAdapter(mOAdapter);
+            } else {
+                if (dt != null){
+                    if (before.equals("")) {
+                        mOAdapter.setmDetailTheme(dt);
+                    } else if ( dt.getStories() != null) {
+                        mOAdapter.addStories(dt.getStories());
+                        mOAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+            loading = false;
+            return true;
+        } catch (JsonSyntaxException e) {
+            // do nothing
+            return false;
+        }
     }
 
     @Override

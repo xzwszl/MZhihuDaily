@@ -1,8 +1,10 @@
 package com.zxw.madaily.tool;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -73,5 +75,24 @@ public class DataUtils {
     public static String getStoryTitle(String title) {
 
         return title.substring(0,4) + "-" +title.substring(4,6) + "-" +title.substring(6);
+    }
+
+    public static String getBeforeDate(String content) {
+
+        Date date;
+        try {
+            DateFormat format = new SimpleDateFormat("yyyyMMdd");
+            date = format.parse(content);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+
+            Date before = calendar.getTime();
+            return format.format(before);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

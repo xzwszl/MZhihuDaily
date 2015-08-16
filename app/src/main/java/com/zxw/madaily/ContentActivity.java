@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -33,6 +34,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.zxw.madaily.config.Urls;
+import com.zxw.madaily.db.TableHandler;
 import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.Extra;
 import com.zxw.madaily.http.Utils;
@@ -55,6 +57,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private TextView mCopyRight;
     private TextView mComments, mPopularity;
 
+    private TableHandler mTableHandler;
+
     //private List<String> imageUrls;
 
     @Override
@@ -70,6 +74,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         id = getIntent().getIntExtra("id", 0);
         gson = new Gson();
+        mTableHandler = new TableHandler(getApplicationContext(), TableHandler.TABLE_CONTENT);
         initView();
 
         loadMessage();
@@ -123,6 +128,17 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
     private void loadMessage() {
 
+        String content = mTableHandler.findContentById(String.valueOf(id));
+
+        if (!TextUtils.isEmpty(content)) {
+            try {
+                parseResponse(content);
+                return;
+            } catch (JsonSyntaxException e) {
+
+            }
+        }
+
         StringRequest contentRequest = new StringRequest(
                 Request.Method.GET,
                 Urls.BASE_URL + Urls.NEWS + id,
@@ -130,25 +146,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onResponse(String response) {
 
-                        mContent = gson.fromJson(response, Content.class);
+                       try {
+                           parseResponse(response);
+                           mTableHandler.insertContentById(String.valueOf(id), response);
 
-                        if (mContent != null) {
+                       } catch (JsonSyntaxException e) {
 
-                            if (!TextUtils.isEmpty(mContent.getImage())) {
-                                Utils.loadImage(mContent.getImage(), mBackDrop);
-                            }
-
-                            if (!TextUtils.isEmpty(mContent.getTitle())) {
-                                mCollapsingToolbarLayout.setTitle(mContent.getTitle());
-                            }
-
-                            if (!TextUtils.isEmpty(mContent.getImage_source())) {
-                               // mCopyRight.setText(mContent.getImage_source());
-                            }
-
-                            loadImage(mContent.getBody());
-                        }
-
+                       }
                     }
                 },
                 new Response.ErrorListener() {
@@ -159,10 +163,32 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 }
         );
 
+
         contentRequest.setTag(this.getLocalClassName());
         DailyApplication.mInstance.getVolleyQueue().add(contentRequest);
     }
 
+    private void parseResponse(String response) {
+
+        mContent = gson.fromJson(response, Content.class);
+
+        if (mContent != null) {
+
+            if (!TextUtils.isEmpty(mContent.getImage())) {
+                Utils.loadImage(mContent.getImage(), mBackDrop);
+            }
+
+            if (!TextUtils.isEmpty(mContent.getTitle())) {
+                mCollapsingToolbarLayout.setTitle(mContent.getTitle());
+            }
+
+            if (!TextUtils.isEmpty(mContent.getImage_source())) {
+                // mCopyRight.setText(mContent.getImage_source());
+            }
+
+            loadImage(mContent.getBody());
+        }
+    }
     private void loadComments() {
 
         StringRequest commentRequest = new StringRequest(
@@ -172,13 +198,16 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onResponse(String response) {
 
-                        mExtra = gson.fromJson(response, Extra.class);
+                        try {
+                            mExtra = gson.fromJson(response, Extra.class);
 
-                        if (mExtra != null) {
-                            mComments.setText(String.valueOf(mExtra.getComments()));
-                            mPopularity.setText(String.valueOf(mExtra.getPopularity()));
+                            if (mExtra != null) {
+                                mComments.setText(String.valueOf(mExtra.getComments()));
+                                mPopularity.setText(String.valueOf(mExtra.getPopularity()));
+                            }
+                        } catch (JsonSyntaxException e) {
+
                         }
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -196,37 +225,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private void loadImage(String content) {
 
         if (TextUtils.isEmpty(content)) return;
-
-      //  if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-       // {
-         //       imageUrls = DataUtils.filterString("<img", "src", content);
-
-           // if (imageUrls != null && imageUrls.size() > 0) {
-
-               // HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
-
-
-
-           //    sds = new ArrayList<String>();
-
-           //     HashCodeFileNameGenerator fsg = new HashCodeFileNameGenerator();
-
-          //      String basePath = StorageUtils.getOwnCacheDirectory(getApplicationContext(),"MADaily/cache/image").getPath();
-
-
-//                for (String iu : imageUrls) {
-
-//                    String filepath = "file://" + basePath + "/" +  fsg.generate(iu);
-//
-//                    sds.add(filepath);
-//                    downloadImage(iu);//loadImage(iu, new ImageView(this));
-//                }
-
-             //   content = DataUtils.replaceString(content, imageUrls, sds);
-
-          //  }
-       // }
-
         content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
         mWebView.loadDataWithBaseURL("file:///android_asset/",
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body onLoad=\"onLoaded()\">" + content + "</body></html>",
@@ -303,7 +301,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         if (id == R.id.action_settings) {
             return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
