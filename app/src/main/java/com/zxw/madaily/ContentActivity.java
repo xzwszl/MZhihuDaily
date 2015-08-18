@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -37,6 +39,7 @@ import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.db.TableHandler;
 import com.zxw.madaily.entity.Content;
 import com.zxw.madaily.entity.Extra;
+import com.zxw.madaily.fragment.SettingFragment;
 import com.zxw.madaily.http.Utils;
 import com.zxw.madaily.tool.DataUtils;
 
@@ -56,11 +59,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private TextView mCopyRight;
     private TextView mComments, mPopularity;
+    private FloatingActionButton mShare;
 
     private TableHandler mTableHandler;
 
     //private List<String> imageUrls;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +85,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView() {
+        mShare = (FloatingActionButton) findViewById(R.id.fab_share);
+        mShare.setOnClickListener(this);
 
         mComments = (TextView) findViewById(R.id.tv_comments);
         mComments.setOnClickListener(this);
@@ -96,7 +101,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         mWebView = (WebView) findViewById(R.id.wv_content);
         WebSettings settings = mWebView.getSettings();
         settings.setDefaultTextEncodingName("utf-8");
-//        settings.setLoadsImagesAutomatically(false);
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
@@ -106,7 +110,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-              //  mWebView.loadUrl("javascript:onLoaded()");
             }
         });
 
@@ -186,7 +189,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 // mCopyRight.setText(mContent.getImage_source());
             }
 
-            loadImage(mContent.getBody());
+      //      if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
+                loadImage(mContent.getBody());
+      //      }
+
         }
     }
     private void loadComments() {
@@ -226,8 +232,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         if (TextUtils.isEmpty(content)) return;
         content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
+
+        String load = "";
+        if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
+            load = "onLoad=\"onLoaded()\"";
+        }
         mWebView.loadDataWithBaseURL("file:///android_asset/",
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body onLoad=\"onLoaded()\">" + content + "</body></html>",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body " + load + ">" + content + "</body></html>",
                 //"<html><body><img src=\"" + Environment.getExternalStorageDirectory().toString() + "/MADaily/cache/image/-1472368281" + "\"></body></html>",
                 "text/html",
                 "charset=utf-8",
@@ -326,6 +337,14 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 startActivity(intent);
                 break;
+
+            case R.id.fab_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, mContent.getShare_url());
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+                break;
         }
     }
 
@@ -342,7 +361,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         @JavascriptInterface
         public void loadImage(String url) {
-            downloadImage(url);
+                downloadImage(url);
         }
     }
 }

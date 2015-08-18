@@ -152,8 +152,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             //   holder.mImage.setImageDrawable(null);
             List<String> urls = story.getImages();
 
-            if (urls!= null && urls.size() >0) {
-
+            if (urls!= null && urls.size() > 0) {
                 Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
             }
         } else {

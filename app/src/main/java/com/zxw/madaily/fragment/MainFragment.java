@@ -2,6 +2,7 @@ package com.zxw.madaily.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -182,8 +183,11 @@ public class MainFragment extends Fragment{
                                     mStoryRecyclerViewAdapter.addFirstNews(news);
 
                                     if (Utils.isWifiAvailable(getActivity()) && mThread == null) {
-                                        mThread = new DownloadThread(news, true);
-                                        mThread.start();
+
+                                        if (PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(SettingFragment.AUTO_DOWNLOAD, false)) {
+                                            mThread = new DownloadThread(news, true);
+                                            mThread.start();
+                                        }
                                     }
 
                                 } else {
@@ -257,7 +261,7 @@ public class MainFragment extends Fragment{
         return false;
     }
 
-    public void offlineDownload(final String id, boolean isForced) {
+    public void  offlineDownload(final String id, boolean isForced) {
 
         if (!isForced && !Utils.isWifiAvailable(getActivity())) return;
         StringRequest contentRequest = new StringRequest(
@@ -299,6 +303,13 @@ public class MainFragment extends Fragment{
             for (Story story : mNews.getStories()) {
                 offlineDownload(String.valueOf(story.getId()),isForced);
             }
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ViewUtils.showMessage(getActivity(), "离线下载完成");
+                }
+            });
         }
     }
 }

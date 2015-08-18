@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,26 +27,24 @@ import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
-import com.zxw.madaily.db.TableHandler;
-import com.zxw.madaily.entity.Content;
+import com.zxw.madaily.db.NewsHandler;
 import com.zxw.madaily.entity.DailyTheme;
 import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.entity.Theme;
 import com.zxw.madaily.fragment.MainFragment;
 import com.zxw.madaily.fragment.OtherFragment;
-import com.zxw.madaily.http.Utils;
 import com.zxw.madaily.tool.FileUtils;
+import com.zxw.madaily.tool.ViewUtils;
 
-import java.security.acl.LastOwnerException;
-
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DrawerLayout mDrawerLayout;
     private ListView mThemesListView;
     private NavigationView mNavigationView;
     private ThemeAdapter mThemeAdapter;
     private Gson gson;
+    private TextView mOffLine;
+    private TextView mSetting;
 
     private MainFragment mMainFragment;
     private OtherFragment mOtherFragment;
@@ -70,7 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
         mThemesListView = (ListView) findViewById(R.id.lv_themes);
 
-        mThemesListView.addHeaderView(LayoutInflater.from(this).inflate(R.layout.nav_header, null));
+        View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
+
+        mOffLine = (TextView) header.findViewById(R.id.tv_download);
+        mOffLine.setOnClickListener(this);
+        mSetting = (TextView) header.findViewById(R.id.tv_setting);
+        mSetting.setOnClickListener(this);
+        mThemesListView.addHeaderView(header);
 
         // we have a header here
         mThemesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -248,5 +252,27 @@ public class MainActivity extends AppCompatActivity {
 
         DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
         super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_download:
+               mDrawerLayout.closeDrawers();
+               String content = new NewsHandler(getApplicationContext()).findLastNews();
+                if (!TextUtils.isEmpty(content)) {
+                    LatestNews news = new Gson().fromJson(content, LatestNews.class);
+                    if (news != null) {
+                        ViewUtils.showMessage(getApplicationContext(),"离线下载中...");
+                        mMainFragment.new DownloadThread(news, true).start();
+                    }
+                }
+                break;
+            case R.id.tv_setting:
+                mDrawerLayout.closeDrawers();
+                Intent intent = new Intent(this, SettingActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 }

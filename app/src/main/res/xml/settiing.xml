@@ -15,7 +15,7 @@
             android:shadowColor="?attr/colorPrimary"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:key="@string/other_set"
+    <PreferenceCategory android:key="other_set"
         android:title="@string/other_set">
 
         <Preference android:key="clear_cache"

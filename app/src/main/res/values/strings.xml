@@ -2,7 +2,7 @@
     <string name="app_name">知乎日报</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">我的设置</string>
     <string name="title_activity_splash">SplashActivity</string>
 
 
@@ -12,7 +12,7 @@
     <string name="my_setting">我的设置</string>
     <string name="default_num">...</string>
 
-    <string name="network_error">将检查网络连接</string>
+    <string name="network_error">请检查网络连接</string>
 
 
     <color name="indicator_white">#AAA</color>
@@ -22,6 +22,7 @@
     <color name="blue">#000099</color>
     <color name="half_black">#8F000000</color>
     <color name="hard_black">#AF000000</color>
+    <color name="theme_back">#E5E5E5</color>
 
     <color name="half_primary">#8F0893AD</color>
     <color name="hard_primary">#AF0893AD</color>
@@ -40,5 +41,7 @@
     <string name="other_set">其他</string>
     <string name="clear_cache">清除缓存</string>
     <string name="version_check">版本检查</string>
+    <string name="clear_success">清除成功</string>
+    <string name="version_latest">最新版本</string>
 
 </resources>

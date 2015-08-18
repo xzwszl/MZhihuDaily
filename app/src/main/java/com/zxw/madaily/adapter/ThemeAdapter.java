@@ -1,6 +1,5 @@
 package com.zxw.madaily.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,6 @@ import com.zxw.madaily.R;
 import com.zxw.madaily.entity.Theme;
 
 import java.util.List;
-import java.util.zip.Inflater;
-
 
 public class ThemeAdapter extends BaseAdapter{
 
@@ -70,7 +67,7 @@ public class ThemeAdapter extends BaseAdapter{
         }
 
         if (position == currentpos) {
-            convertView.setBackgroundColor(parent.getResources().getColor(android.R.color.secondary_text_dark));
+            convertView.setBackgroundColor(parent.getResources().getColor(R.color.theme_back));
         } else {
             convertView.setBackgroundColor(parent.getResources().getColor(android.R.color.white));
         }
