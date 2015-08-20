@@ -28,7 +28,27 @@ public class Utils {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
 
-        ImageLoader.getInstance().displayImage(url, image, options);
+        ImageLoader.getInstance().displayImage(url, image, options, new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String imageUri, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                view.setTag(imageUri);
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+
+            }
+        });
     }
 
     //判断当前网络状态，如果为WIFI，则优先用网络下载，如果是2G，3G，优先使用缓存。

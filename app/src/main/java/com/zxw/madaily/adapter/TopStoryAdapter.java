@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.entity.Story;
+import com.zxw.madaily.http.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +51,22 @@ public class TopStoryAdapter extends PagerAdapter{
                     }
                 });
 
-                loadImage(mTopStories.get(i).getImage(), imageview);
+                if (imageview.getTag() == null) {
+                    Utils.loadImage(mTopStories.get(i).getImage(), imageview);
+                }
+
             }
+        }
+    }
+
+    public void setmTopStories(List<Story> topStories) {
+        this.mTopStories = topStories;
+        for (int i = 0; i < mTopStories.size(); i++ ) {
+
+            if (mTopViews.get(i).getTag() == null) {
+                Utils.loadImage(mTopStories.get(i).getImage(), mTopViews.get(i));
+            }
+
         }
     }
 
@@ -91,16 +106,16 @@ public class TopStoryAdapter extends PagerAdapter{
       container.removeView((View)object);
     }
 
-    private void loadImage(String url, ImageView image){
-
-        DisplayImageOptions options = new DisplayImageOptions.Builder()
-                .resetViewBeforeLoading(true)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-
-        ImageLoader.getInstance().displayImage(url, image, options);
-    }
+//    private void loadImage(String url, ImageView image){
+//
+//        DisplayImageOptions options = new DisplayImageOptions.Builder()
+//                .resetViewBeforeLoading(true)
+//                .cacheInMemory(true)
+//                .cacheOnDisk(true)
+//                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
+//                .bitmapConfig(Bitmap.Config.RGB_565)
+//                .build();
+//
+//        ImageLoader.getInstance().displayImage(url, image, options);
+//    }
 }

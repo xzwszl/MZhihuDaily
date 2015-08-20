@@ -94,7 +94,7 @@ public class MainFragment extends Fragment{
         setupRecyclerView();
         gson = new Gson();
 
-        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(null, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
+        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(getActivity() ,null, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
             @Override
             public void select(View view, int position) {
                 Intent intent = new Intent(getActivity(), ContentActivity.class);

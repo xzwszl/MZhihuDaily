@@ -1,5 +1,6 @@
 package com.zxw.madaily.adapter;
 
+import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,10 +32,12 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private static  TopStoryAdapter mTopAdapter;
     private OnItemSelectedLinstener mOnItemSelectedLinstener;
+    private Context mContext;
 
-    public StoryRecyclerViewAdapter(List<LatestNews> news, OnItemSelectedLinstener linstener){
+    public StoryRecyclerViewAdapter(Context context, List<LatestNews> news, OnItemSelectedLinstener linstener){
         this.mNews = news;
         this.mOnItemSelectedLinstener = linstener;
+        this.mContext = context;
     }
 
     public void addFirstNews(LatestNews news) {
@@ -45,6 +48,12 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             mNews.clear();
         }
         mNews.add(news);
+
+        if (mTopAdapter == null && mNews != null && mNews.size()> 0) mTopAdapter = new TopStoryAdapter(mContext, mNews.get(0).getTop_stories());
+        else if (mTopAdapter != null) {
+            mTopAdapter.setmTopStories(mNews.get(0).getTop_stories());
+            mTopAdapter.notifyDataSetChanged();
+        }
     }
 
     public void addNews(LatestNews news) {
@@ -81,7 +90,6 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             return holder;
         } else if (viewType == 0) {
 
-            if (mTopAdapter == null && mNews != null && mNews.size()> 0) mTopAdapter = new TopStoryAdapter(parent.getContext(), mNews.get(0).getTop_stories());
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewpager_top, parent, false);
             return new TopViewHolder(view);
         } else {
@@ -152,7 +160,8 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             //   holder.mImage.setImageDrawable(null);
             List<String> urls = story.getImages();
 
-            if (urls!= null && urls.size() > 0) {
+            if (urls!= null && urls.size() > 0 && ((StoryViewHolder) holder).mImage.getTag() == null) {
+
                 Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
             }
         } else {
@@ -206,7 +215,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    public static class TopViewHolder extends RecyclerView.ViewHolder {
+    public class TopViewHolder extends RecyclerView.ViewHolder {
 
         public final ViewPager mViewPager;
         public final TextView mTitle;
@@ -218,8 +227,12 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             mViewPager = (ViewPager) itemView.findViewById(R.id.vp_top);
             mTitle = (TextView) itemView.findViewById(R.id.tv_top_title);
             mIndicator = (IndicatorView) itemView.findViewById(R.id.idv_indicator);
-
             dealWithViewPager(mViewPager, mTitle);
+        }
+
+        public void update() {
+            mTopAdapter.setmTopStories(mNews.get(0).getTop_stories());
+            mTopAdapter.notifyDataSetChanged();
         }
         private void dealWithViewPager(final ViewPager vp, final TextView tv) {
 
@@ -267,7 +280,6 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public interface OnItemSelectedLinstener{
-
         void select(View view, int position);
     }
 }
