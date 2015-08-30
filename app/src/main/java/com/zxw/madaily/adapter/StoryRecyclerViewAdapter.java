@@ -160,9 +160,10 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             //   holder.mImage.setImageDrawable(null);
             List<String> urls = story.getImages();
 
-            if (urls!= null && urls.size() > 0 && ((StoryViewHolder) holder).mImage.getTag() == null) {
+            if (urls!= null && urls.size() > 0 ) {
 
-                Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
+                if (((StoryViewHolder) holder).mImage.getTag() == null || !((StoryViewHolder) holder).mImage.getTag().equals(urls.get(0)))
+                    Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
             }
         } else {
 

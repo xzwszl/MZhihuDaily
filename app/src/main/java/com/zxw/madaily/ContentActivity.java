@@ -103,6 +103,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         settings.setDefaultTextEncodingName("utf-8");
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
+//        settings.setCacheMode(WebView.PERSISTENT_NO_CACHE);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         mWebView.addJavascriptInterface(new JsInteration(), "control");
         mWebView.setWebViewClient(new WebViewClient() {
@@ -115,9 +116,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         mWebView.setWebChromeClient(new WebChromeClient());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            WebView.setWebContentsDebuggingEnabled(true);
+//        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -231,7 +232,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     private void loadImage(String content) {
 
         if (TextUtils.isEmpty(content)) return;
-        content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
+            content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
 
         String load = "";
         if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
@@ -274,13 +275,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
                 final String filepath = "file://" + basePath + "/" + fsg.generate(imageUri);
 
-                mWebView.post(new Runnable() {
-                    @Override
-                    public void run() {
+//                mWebView.post(new Runnable() {
+//                    @Override
+//                    public void run() {
                         mWebView.loadUrl("javascript:showImage('" + imageUri + "','" + filepath + "')");
-                        mWebView.requestLayout();
-                    }
-                });
+//                       // mWebView.requestLayout();
+//                    }
+//                });
             }
 
             @Override
@@ -304,7 +305,6 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         int id = item.getItemId();
 
         if (id ==android.R.id.home) {
-
             onBackPressed();
         }
 
@@ -360,8 +360,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         @JavascriptInterface
-        public void loadImage(String url) {
-                downloadImage(url);
+        public void loadImage(final String url) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadImage(url);
+                    }
+                });
         }
     }
 }

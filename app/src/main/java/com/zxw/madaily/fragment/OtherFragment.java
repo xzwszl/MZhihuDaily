@@ -170,7 +170,7 @@ public class OtherFragment extends Fragment {
             // 优先使用数据库
             String content = mTableHandler.findContentById(this.getTag());
 
-            if (TextUtils.isEmpty(content)) {
+            if (!TextUtils.isEmpty(content)) {
                 pareseResponse("", content);
             }
         }

@@ -3,6 +3,7 @@ package com.zxw.madaily.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 /**
  * Created by sony on 2015/8/15.
@@ -38,18 +39,36 @@ public class TableHandler {
 
     public void insertContentById(String id, String content) {
         ContentValues values = new ContentValues();
-        values.put(ID,id);
+        values.put(ID, id);
         values.put(CONTENT, content);
         DBHandler.getInstance(mContext).getWritableDatabase()
                 .insert(mTable, null, values);
     }
 
     public void updateContentByIdy(String id, String content) {
-        ContentValues values = new ContentValues();
-        values.put(ID, id);
-        values.put(CONTENT, content);
-        DBHandler.getInstance(mContext).getWritableDatabase()
-                .update(mTable, values, ID + "=?", new String[]{id});
+
+        SQLiteDatabase db = DBHandler.getInstance(mContext).getWritableDatabase();
+
+        db.beginTransaction();
+
+        try {
+            Cursor cursor = db.query(mTable, new String[]{CONTENT}, ID + "=?", new String[]{id}, null, null, null);
+
+            if (cursor == null || cursor.getCount() <= 0) {
+                insertContentById(id, content);
+            } else {
+                if (cursor != null) cursor.close();
+                ContentValues values = new ContentValues();
+                values.put(ID, id);
+                values.put(CONTENT, content);
+                db.update(mTable, values, ID + "=?", new String[]{id});
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public void deleteContentByIdy(String id) {

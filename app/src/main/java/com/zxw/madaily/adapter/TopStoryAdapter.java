@@ -51,7 +51,7 @@ public class TopStoryAdapter extends PagerAdapter{
                     }
                 });
 
-                if (imageview.getTag() == null) {
+                if (imageview.getTag() == null || !mTopViews.get(i).getTag().equals(mTopViews.get(i).getTag())) {
                     Utils.loadImage(mTopStories.get(i).getImage(), imageview);
                 }
 
@@ -63,7 +63,7 @@ public class TopStoryAdapter extends PagerAdapter{
         this.mTopStories = topStories;
         for (int i = 0; i < mTopStories.size(); i++ ) {
 
-            if (mTopViews.get(i).getTag() == null) {
+            if (mTopViews.get(i).getTag() == null || !mTopViews.get(i).getTag().equals(mTopViews.get(i).getTag())) {
                 Utils.loadImage(mTopStories.get(i).getImage(), mTopViews.get(i));
             }
 

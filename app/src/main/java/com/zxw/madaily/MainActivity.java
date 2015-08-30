@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     ft.replace(R.id.container, mMainFragment, "main");
                     ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
-
+                    ft.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
                     ft.commit();
 
                     return;

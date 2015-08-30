@@ -94,14 +94,16 @@ public class MainFragment extends Fragment{
         setupRecyclerView();
         gson = new Gson();
 
-        mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(getActivity() ,null, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
-            @Override
-            public void select(View view, int position) {
-                Intent intent = new Intent(getActivity(), ContentActivity.class);
-                intent.putExtra("id", ((Story) mStoryRecyclerViewAdapter.getOjbect(position)).getId());
-                startActivity(intent);
-            }
-        });
+        if (mStoryRecyclerViewAdapter == null) {
+            mStoryRecyclerViewAdapter = new StoryRecyclerViewAdapter(getActivity(), null, new StoryRecyclerViewAdapter.OnItemSelectedLinstener() {
+                @Override
+                public void select(View view, int position) {
+                    Intent intent = new Intent(getActivity(), ContentActivity.class);
+                    intent.putExtra("id", ((Story) mStoryRecyclerViewAdapter.getOjbect(position)).getId());
+                    startActivity(intent);
+                }
+            });
+        }
 
         mNewsRV.setAdapter(mStoryRecyclerViewAdapter);
 
