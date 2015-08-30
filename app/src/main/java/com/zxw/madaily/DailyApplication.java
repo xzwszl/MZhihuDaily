@@ -54,6 +54,7 @@ public class DailyApplication extends Application{
                 .diskCacheSize(50 * 1024 * 1024)
                 .diskCacheSize(100)
                 .imageDownloader(new BaseImageDownloader(this, 5 * 1000, 30 * 1000))
+                .writeDebugLogs()
                 .build();
 
         ImageLoader.getInstance().init(config);

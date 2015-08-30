@@ -33,6 +33,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.zxw.madaily.config.Urls;
@@ -103,7 +104,8 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         settings.setDefaultTextEncodingName("utf-8");
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
-//        settings.setCacheMode(WebView.PERSISTENT_NO_CACHE);
+        settings.setLoadsImagesAutomatically(false);
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         mWebView.addJavascriptInterface(new JsInteration(), "control");
         mWebView.setWebViewClient(new WebViewClient() {
@@ -111,6 +113,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                //mWebView.getSettings().setJavaScriptEnabled(true);
+                mWebView.getSettings().setLoadsImagesAutomatically(true);
+                mWebView.loadUrl("javascript:onLoaded()");
             }
         });
 
@@ -236,7 +241,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         String load = "";
         if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
-            load = "onLoad=\"onLoaded()\"";
+           // load = "onLoad=\"onLoaded()\"";
         }
         mWebView.loadDataWithBaseURL("file:///android_asset/",
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body " + load + ">" + content + "</body></html>",
@@ -251,11 +256,12 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .resetViewBeforeLoading(true)
                 .cacheOnDisk(true)
+                .cacheInMemory(false)
                 .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
 
-        ImageLoader.getInstance().loadImage(url, options, new ImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(url, new ImageSize(0,0), new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
 
@@ -282,6 +288,10 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 //                       // mWebView.requestLayout();
 //                    }
 //                });
+
+                if (loadedImage != null &&!loadedImage.isRecycled()) {
+                    loadedImage.recycle();
+                }
             }
 
             @Override
@@ -320,6 +330,9 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
     protected void onDestroy() {
         super.onDestroy();
         mWebView.clearCache(true);
+        mWebView.removeAllViews();
+        mWebView.removeJavascriptInterface("control");
+        mWebView.destroy();
         DailyApplication.mInstance.getVolleyQueue().cancelAll(this.getLocalClassName());
     }
 
@@ -361,11 +374,11 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         @JavascriptInterface
         public void loadImage(final String url) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        downloadImage(url);
-                    }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    downloadImage(url);
+                }
                 });
         }
     }
