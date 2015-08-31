@@ -104,7 +104,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         settings.setDefaultTextEncodingName("utf-8");
         settings.setAllowFileAccess(true);
         settings.setJavaScriptEnabled(true);
-        settings.setLoadsImagesAutomatically(false);
+
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         mWebView.addJavascriptInterface(new JsInteration(), "control");
@@ -113,17 +113,17 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                //mWebView.getSettings().setJavaScriptEnabled(true);
-                mWebView.getSettings().setLoadsImagesAutomatically(true);
-                mWebView.loadUrl("javascript:onLoaded()");
+                mWebView.getSettings().setJavaScriptEnabled(true);
+
+                if (!mWebView.getSettings().getLoadsImagesAutomatically())
+                    mWebView.getSettings().setLoadsImagesAutomatically(true);
+                if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
+                    mWebView.loadUrl("javascript:onLoaded()");
+                }
+
             }
         });
 
-        mWebView.setWebChromeClient(new WebChromeClient());
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            WebView.setWebContentsDebuggingEnabled(true);
-//        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -241,7 +241,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         String load = "";
         if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
-           // load = "onLoad=\"onLoaded()\"";
+//            load = "onLoad=\"onLoaded()\"";
         }
         mWebView.loadDataWithBaseURL("file:///android_asset/",
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body " + load + ">" + content + "</body></html>",
@@ -261,7 +261,7 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
 
-        ImageLoader.getInstance().loadImage(url, new ImageSize(0,0), new ImageLoadingListener() {
+        ImageLoader.getInstance().loadImage(url,new ImageSize(1,1), options, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
 
@@ -281,13 +281,13 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
                 final String filepath = "file://" + basePath + "/" + fsg.generate(imageUri);
 
-//                mWebView.post(new Runnable() {
-//                    @Override
-//                    public void run() {
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
                         mWebView.loadUrl("javascript:showImage('" + imageUri + "','" + filepath + "')");
-//                       // mWebView.requestLayout();
-//                    }
-//                });
+                       // mWebView.requestLayout();
+                    }
+                });
 
                 if (loadedImage != null &&!loadedImage.isRecycled()) {
                     loadedImage.recycle();
@@ -374,12 +374,12 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         @JavascriptInterface
         public void loadImage(final String url) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
                     downloadImage(url);
-                }
-                });
+//                }
+//                });
         }
     }
 }

@@ -4,9 +4,9 @@ function showImage(imageUri, fileUri) {
 
     for (var i=0; i < objs.length; i++) {
 
-          if (objs[i].getAttribute("img-src") == imageUri) {
+          if (objs[i].getAttribute("img-src") == imageUri && objs[i]['src'] != fileUri) {
                   objs[i]['src'] = fileUri;
-                  break;
+                 // break;
           }
     }
 }
