@@ -172,6 +172,8 @@ public class OtherFragment extends Fragment {
 
             if (!TextUtils.isEmpty(content)) {
                 pareseResponse("", content);
+            } else {
+                DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
             }
         }
     }
