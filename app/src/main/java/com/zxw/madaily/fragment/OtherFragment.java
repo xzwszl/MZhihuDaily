@@ -94,7 +94,7 @@ public class OtherFragment extends Fragment {
         setupRecyclerView();
 
         mTableHandler = new TableHandler(getActivity(), TableHandler.TABLE_THEMES);
-        loadData("");
+        loadData("", false);
     }
 
     private void setupSwipeRefresh() {
@@ -102,7 +102,7 @@ public class OtherFragment extends Fragment {
             @Override
             public void onRefresh() {
                 mSwipeRefresh.setRefreshing(true);
-                loadData("");
+                loadData("", true);
                 mSwipeRefresh.setRefreshing(false);
             }
         });
@@ -125,7 +125,7 @@ public class OtherFragment extends Fragment {
 
                         int id = stories.get(count - 1).getId();
 
-                        loadData("/before/" + id);
+                        loadData("/before/" + id, true);
                     }
                 }
                 super.onScrolled(recyclerView, dx, dy);
@@ -138,7 +138,7 @@ public class OtherFragment extends Fragment {
         });
     }
 
-    private void loadData(final String before) {
+    private void loadData(final String before, boolean loadFromNetwork) {
 
         loading = true;
         StringRequest dtRequest = new StringRequest(
@@ -167,14 +167,18 @@ public class OtherFragment extends Fragment {
             DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
         } else if (before.equals("")) {
 
-            // 优先使用数据库
-            String content = mTableHandler.findContentById(this.getTag());
+            String content = null;
+            if (!loadFromNetwork) {
+                // 优先使用数据库
+                content = mTableHandler.findContentById(this.getTag());
 
-            if (!TextUtils.isEmpty(content)) {
-                pareseResponse("", content);
-            } else {
-                DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
+                if (!TextUtils.isEmpty(content)) {
+                    pareseResponse("", content);
+                    return;
+                }
             }
+
+            DailyApplication.mInstance.getVolleyQueue().add(dtRequest);
         }
     }
 

@@ -228,7 +228,7 @@ public class MainFragment extends Fragment{
         if (Utils.isWifiAvailable(getActivity()) && type.equals(Urls.LASTEST)) {
             DailyApplication.mInstance.getVolleyQueue().add(storyRequest);
         } else {
-            if (!loadDateFromDB(type) && !type.equals(Urls.LASTEST)) {
+            if (!loadDateFromDB(type)/* && !type.equals(Urls.LASTEST)*/) {
                 DailyApplication.mInstance.getVolleyQueue().add(storyRequest);
             }
         }
