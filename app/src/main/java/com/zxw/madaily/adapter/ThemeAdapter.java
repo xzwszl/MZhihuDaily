@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.Theme;
 
@@ -65,11 +66,11 @@ public class ThemeAdapter extends BaseAdapter{
         } else {
             ((TextView)convertView).setText(mThemes.get(position-1).getName());
         }
-
+        ((TextView)convertView).setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
         if (position == currentpos) {
-            convertView.setBackgroundColor(parent.getResources().getColor(R.color.theme_back));
+            convertView.setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.theme_back));
         } else {
-            convertView.setBackgroundColor(parent.getResources().getColor(android.R.color.white));
+            convertView.setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.card_back));
         }
 
         return convertView;

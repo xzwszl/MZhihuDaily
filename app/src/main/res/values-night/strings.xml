@@ -1,0 +1,17 @@
+<resources>
+    <color name="indicator_white">#AAA</color>
+    <color name="window_background">#444</color>
+    <color name="orange">#FF9900</color>
+    <color name="green">#009900</color>
+    <color name="blue">#000099</color>
+    <color name="half_black">#8F000000</color>
+    <color name="hard_black">#AF000000</color>
+    <color name="theme_back">#444</color>
+
+    <color name="half_primary">#8F0893AD</color>
+    <color name="hard_primary">#AF0893AD</color>
+    <color name="colorPrimary">#666</color>
+
+    <color name="card_back">#888</color>
+    <color name="text_color">#CCC</color>
+</resources>

@@ -138,6 +138,12 @@ public class OtherFragment extends Fragment {
         });
     }
 
+    public void refreshView() {
+        if (mOAdapter != null) {
+            mOAdapter.notifyDataSetChanged();
+        }
+    }
+
     private void loadData(final String before, boolean loadFromNetwork) {
 
         loading = true;

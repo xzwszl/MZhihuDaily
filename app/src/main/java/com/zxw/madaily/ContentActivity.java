@@ -1,6 +1,8 @@
 package com.zxw.madaily;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -117,9 +119,14 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
                 if (!mWebView.getSettings().getLoadsImagesAutomatically())
                     mWebView.getSettings().setLoadsImagesAutomatically(true);
-                if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
-                    mWebView.loadUrl("javascript:onLoaded()");
-                }
+//                if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
+//                    SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
+//                    if (preferences.getBoolean("mode", false)) {
+//                        mWebView.loadUrl("javascript:onLoaded('mode')");
+//                    } else {
+//                        mWebView.loadUrl("javascript:onLoaded()");
+//                    }
+//                }
 
             }
         });
@@ -241,7 +248,12 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
 
         String load = "";
         if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
-//            load = "onLoad=\"onLoaded()\"";
+            SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
+            if (preferences.getBoolean("mode", false)) {
+                load = "onLoad=\"onLoaded('mode')\"";
+            } else {
+                load = "onLoad=\"onLoaded()\"";
+            }
         }
         mWebView.loadDataWithBaseURL("file:///android_asset/",
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"/><link rel='stylesheet' href='news_qa.auto.css' /><script type=\"text/javascript\" src=\"new.js\"></script></head><body " + load + ">" + content + "</body></html>",

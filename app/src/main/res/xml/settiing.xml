@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:key="normal_set"
+    <com.zxw.madaily.view.ChangeablePreferenceCategory android:key="normal_set"
         android:title="@string/normal_set">
 
-        <CheckBoxPreference android:key="auto_download"
+        <com.zxw.madaily.view.ChangeableCheckBoxPreference android:key="auto_download"
             android:title="@string/auto_download"
             android:summary="@string/auto_download_tips"/>
 
-        <CheckBoxPreference android:key="no_picture"
+        <com.zxw.madaily.view.ChangeableCheckBoxPreference android:key="no_picture"
             android:title="@string/no_picture"
             android:summary="@string/no_picture_tips"
             android:shadowColor="?attr/colorPrimary"/>
-    </PreferenceCategory>
+    </com.zxw.madaily.view.ChangeablePreferenceCategory>
 
-    <PreferenceCategory android:key="other_set"
+    <com.zxw.madaily.view.ChangeablePreferenceCategory android:key="other_set"
         android:title="@string/other_set">
 
-        <Preference android:key="clear_cache"
+        <com.zxw.madaily.view.ChangeablePreference android:key="clear_cache"
             android:title="@string/clear_cache"/>
 
-        <Preference android:key="version_check"
+        <com.zxw.madaily.view.ChangeablePreference android:key="version_check"
             android:title="@string/version_check"/>
 
-    </PreferenceCategory>
+    </com.zxw.madaily.view.ChangeablePreferenceCategory>
 </PreferenceScreen>

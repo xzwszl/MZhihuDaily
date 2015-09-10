@@ -2,6 +2,7 @@ package com.zxw.madaily.adapter;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.entity.Story;
@@ -165,6 +167,10 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 if (((StoryViewHolder) holder).mImage.getTag() == null || !((StoryViewHolder) holder).mImage.getTag().equals(urls.get(0)))
                     Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
             }
+
+            ((StoryViewHolder) holder).mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            CardView card = (CardView) ((StoryViewHolder) holder).mTitle.getParent().getParent();
+            card.setCardBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.card_back));
         } else {
 
             String date = (String) getOjbect(position);

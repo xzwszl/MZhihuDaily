@@ -1,6 +1,11 @@
 package com.zxw.madaily;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -18,8 +23,8 @@ import java.io.File;
 public class DailyApplication extends Application{
 
     private RequestQueue mVolleyQueue = null;
-
     public static DailyApplication mInstance;
+    private Resources mResource;
 
     @Override
     public void onCreate() {
@@ -31,6 +36,10 @@ public class DailyApplication extends Application{
     private void init(){
         initUIL();
         getVolleyQueue();
+
+        mResource = getResources();
+        SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
+        updateNightMode(preferences.getBoolean("mode", false));
     }
 
     public RequestQueue getVolleyQueue(){
@@ -39,12 +48,10 @@ public class DailyApplication extends Application{
 
             mVolleyQueue = Volley.newRequestQueue(this);
         }
-
         return mVolleyQueue;
     }
 
     public void initUIL(){
-
         File cacheDir = StorageUtils.getOwnCacheDirectory(this, "MADaily/cache/image");
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .denyCacheImageMultipleSizesInMemory()
@@ -74,7 +81,18 @@ public class DailyApplication extends Application{
 
         clearMemory();
         super.onLowMemory();
+    }
 
+    public Resources getAppResource() {
+        return mResource;
+    }
+
+    public void updateNightMode(boolean on) {
+        DisplayMetrics dm = mResource.getDisplayMetrics();
+        Configuration config = mResource.getConfiguration();
+        config.uiMode &= ~Configuration.UI_MODE_NIGHT_MASK;
+        config.uiMode |= on ? Configuration.UI_MODE_NIGHT_YES : Configuration.UI_MODE_NIGHT_NO;
+        mResource.updateConfiguration(config, dm);
     }
 
     @Override

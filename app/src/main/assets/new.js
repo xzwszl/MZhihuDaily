@@ -12,8 +12,13 @@ function showImage(imageUri, fileUri) {
 }
 
 var DEFAULT_IMAGE_URI = "default_pic_content_image_download_dark.png";
-function onLoaded() {
+function onLoaded(mode) {
     showDefaultImage('default_pic_content_image_download_dark.png');
+    document.body.className += mode ? 'night ' : ' ';
+}
+
+function setNigthMode(mode) {
+    document.body.className += mode ? 'night ' : ' ';
 }
 
 function showDefaultImage(imageUri) {

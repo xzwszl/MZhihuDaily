@@ -1,17 +1,24 @@
 package com.zxw.madaily;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Gson gson;
     private TextView mOffLine;
     private TextView mSetting;
+    private Toolbar toolbar;
 
     private MainFragment mMainFragment;
     private OtherFragment mOtherFragment;
@@ -52,17 +60,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         init();
 
     }
 
     private void init(){
+
         initView();
         gson = new Gson();
         loadTheme();
+
     }
+
+
 
     private void initView(){
 
@@ -126,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         final ActionBar actionBar = getSupportActionBar();
@@ -184,6 +195,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
+        if (preferences.getBoolean("mode", false)) {
+            menu.getItem(0).setTitle(R.string.mode_day);
+        } else {
+            menu.getItem(0).setTitle(R.string.mode_night);
+        }
         return true;
     }
 
@@ -201,6 +218,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.action_settings:
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.action_mode:
+                SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
+                android.content.SharedPreferences.Editor edit = preferences.edit();
+                if (item.getTitle().equals(DailyApplication.mInstance.getAppResource().getString(R.string.mode_night))) {
+                    edit.putBoolean("mode", true);
+
+                    DailyApplication.mInstance.updateNightMode(true);
+                    item.setTitle(R.string.mode_day);
+                } else {
+                    edit.putBoolean("mode", false);
+                    DailyApplication.mInstance.updateNightMode(false);
+                    item.setTitle(R.string.mode_night);
+                }
+                edit.commit();
+//                menu.getItem(0).getActionView().setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.window_background));
+                mDrawerLayout.setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.window_background));
+                toolbar.setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.colorPrimary));
+                ((View) mOffLine.getParent()).setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.colorPrimary));
+                mThemeAdapter.notifyDataSetChanged();
+                if (mMainFragment != null) mMainFragment.refreshView();
+                if (mOtherFragment != null) mOtherFragment.refreshView();
                 break;
         }
         return super.onOptionsItemSelected(item);

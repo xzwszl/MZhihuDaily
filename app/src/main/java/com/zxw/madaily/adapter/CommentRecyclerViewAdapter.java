@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.Comment;
 import com.zxw.madaily.http.Utils;
@@ -99,7 +100,10 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             commentViewHolder.like.setText(comment.getLikes());
             commentViewHolder.conntent.setText(comment.getContent());
             commentViewHolder.time.setText(DataUtils.getDate(comment.getTime()));
-
+            commentViewHolder.auther.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            commentViewHolder.conntent.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            commentViewHolder.time.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            commentViewHolder.like.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
 //        }
     }
 

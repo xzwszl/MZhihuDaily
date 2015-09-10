@@ -3,11 +3,12 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#0893AD</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">#DDD</item>
         <item name="colorAccent">#FFFFFF</item>
 
         <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:popupMenuStyle">@style/PopuMenuStyle</item>
     </style>
 
     <!-- empty style here -->
@@ -15,4 +16,12 @@
 
     </style>
 
+    <style name="PopuMenuStyle" parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">@color/window_background</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance</item>
+    </style>
+
+    <style name="TextAppearance">
+        <item name="android:textColor">@color/text_color</item>
+    </style>
 </resources>

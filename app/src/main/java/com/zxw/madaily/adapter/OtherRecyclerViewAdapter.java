@@ -1,9 +1,12 @@
 package com.zxw.madaily.adapter;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.zxw.madaily.DailyApplication;
 import com.zxw.madaily.R;
 import com.zxw.madaily.entity.DetailTheme;
 import com.zxw.madaily.entity.Story;
@@ -94,7 +97,11 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
             } else {
                 svh.mImage.setVisibility(View.GONE);
             }
+            CardView card = (CardView) svh.mTitle.getParent().getParent();
+            card.setCardBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.card_back));
             svh.mTitle.setText(mDetailTheme.getStories().get(position - 1).getTitle());
+            svh.mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+
         } else if (type == 0) {
             StoryRecyclerViewAdapter.StoryViewHolder ovh = (StoryRecyclerViewAdapter.StoryViewHolder) holder;
             Utils.loadImage(mDetailTheme.getBackground(), ovh.mImage);

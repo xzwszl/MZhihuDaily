@@ -111,7 +111,7 @@ public class MainFragment extends Fragment{
 
         mNewsHandler = new NewsHandler(getActivity());
         mTableHandler = new TableHandler(getActivity(), TableHandler.TABLE_CONTENT);
-        loadData(Urls.LASTEST);
+        loadData(Urls.LASTEST, false);
     }
 
     private void initView(View root) {
@@ -136,7 +136,7 @@ public class MainFragment extends Fragment{
             @Override
             public void onRefresh() {
                 mRefresh.setRefreshing(true);
-                loadData(Urls.LASTEST);
+                loadData(Urls.LASTEST, true);
                 mRefresh.setRefreshing(false);
             }
         });
@@ -155,7 +155,7 @@ public class MainFragment extends Fragment{
                     if (layoutManager.findLastCompletelyVisibleItemPosition() == count - 1) {
                         List<LatestNews> news = mStoryRecyclerViewAdapter.getmNews();
                         if (news != null && news.size() > 0) {
-                            loadData("before/" + news.get(news.size() - 1).getDate());
+                            loadData("before/" + news.get(news.size() - 1).getDate(), false);
                         }
                     }
                 }
@@ -168,7 +168,13 @@ public class MainFragment extends Fragment{
             }
         });
     }
-    private void loadData(final String type) {
+
+    public void refreshView() {
+        if (mStoryRecyclerViewAdapter != null) {
+            mStoryRecyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+    private void loadData(final String type, final boolean isRefersh) {
         loading = true;
         StringRequest storyRequest = new StringRequest(
                 Request.Method.GET,
@@ -225,12 +231,15 @@ public class MainFragment extends Fragment{
         );
         storyRequest.setTag(this.getClass().getName());
 
-        if (Utils.isWifiAvailable(getActivity()) && type.equals(Urls.LASTEST)) {
-            DailyApplication.mInstance.getVolleyQueue().add(storyRequest);
-        } else {
-            if (!loadDateFromDB(type)/* && !type.equals(Urls.LASTEST)*/) {
+        if (type.equals(Urls.LASTEST)) {
+            if (Utils.isWifiAvailable(getActivity()) || isRefersh) {
                 DailyApplication.mInstance.getVolleyQueue().add(storyRequest);
+                return;
             }
+        }
+
+        if (!loadDateFromDB(type)/* && !type.equals(Urls.LASTEST)*/) {
+            DailyApplication.mInstance.getVolleyQueue().add(storyRequest);
         }
     }
 
