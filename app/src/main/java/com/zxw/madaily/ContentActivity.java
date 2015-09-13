@@ -246,13 +246,17 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         if (TextUtils.isEmpty(content)) return;
             content = content.replace("src","src=\"default_pic_content_image_download_dark.png\" img-src");
 
-        String load = "";
+        String load = null;
+        SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
         if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
-            SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
             if (preferences.getBoolean("mode", false)) {
-                load = "onLoad=\"onLoaded('mode')\"";
+                load = "onLoad=\"onLoaded('mode', true)\"";
             } else {
                 load = "onLoad=\"onLoaded()\"";
+            }
+        } else {
+            if (preferences.getBoolean("mode", false)) {
+                load = "onLoad=\"onLoaded('mode')\"";
             }
         }
         mWebView.loadDataWithBaseURL("file:///android_asset/",
