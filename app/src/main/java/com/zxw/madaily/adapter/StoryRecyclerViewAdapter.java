@@ -178,6 +178,8 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 ((DateViewHodler)holder).mDate.setText("今日要闻");
             else
                 ((DateViewHodler)holder).mDate.setText(DataUtils.getStoryTitle(date));
+
+            ((DateViewHodler) holder).mDate.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
         }
     }
 

@@ -15,6 +15,7 @@ public class TopSwipeRefreshLayout extends SwipeRefreshLayout {
     private float mInitY;
     private int mSlop;
     private float mHeight;
+    private boolean isTopEnable;
 
     public TopSwipeRefreshLayout(Context context) {
         super(context);
@@ -30,6 +31,7 @@ public class TopSwipeRefreshLayout extends SwipeRefreshLayout {
 
         mSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mHeight = getResources().getDisplayMetrics().density *200;
+        isTopEnable = false;
     }
 
     @Override
@@ -40,6 +42,7 @@ public class TopSwipeRefreshLayout extends SwipeRefreshLayout {
             case MotionEvent.ACTION_DOWN:
                 mInitX = ev.getX();
                 mInitY = ev.getY();
+                isTopEnable = false;
                 break;
             case MotionEvent.ACTION_MOVE:
 
@@ -47,9 +50,13 @@ public class TopSwipeRefreshLayout extends SwipeRefreshLayout {
                 final float y = ev.getY();
                 float xDiff = Math.abs(x - mInitX);
                 float yDiff = Math.abs(y - mInitY);
-                if ( xDiff> Math.max(mSlop, yDiff) && mInitY < mHeight) {
-                    return false;
+                if ( xDiff> Math.max(mSlop, yDiff) && mHeight > y) {
+                    isTopEnable = true;
                 }
+                if (isTopEnable) return false;
+                break;
+            case MotionEvent.ACTION_UP:
+                isTopEnable = false;
                 break;
         }
 
