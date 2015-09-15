@@ -60,10 +60,12 @@ public class TopStoryAdapter extends PagerAdapter{
     }
 
     public void setmTopStories(List<Story> topStories) {
+
+        if (topStories == null || topStories.size() == 0) return;
         this.mTopStories = topStories;
         for (int i = 0; i < mTopStories.size(); i++ ) {
 
-            if (mTopViews.get(i).getTag() == null || !mTopViews.get(i).getTag().equals(mTopViews.get(i).getTag())) {
+            if (mTopViews.get(i).getTag() == null || !topStories.get(i).getImage().equals(mTopViews.get(i).getTag())) {
                 Utils.loadImage(mTopStories.get(i).getImage(), mTopViews.get(i));
             }
 
