@@ -6,7 +6,6 @@
     android:paddingBottom="16dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/head_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -20,25 +19,43 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_centerHorizontal="true"/>
-    <TextView
-        android:id="@+id/tv_download"
-        android:layout_width="0dp"
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/offline_download"
-        android:textColor="@android:color/white"
         android:layout_below="@id/head_image"
         android:layout_alignRight="@id/partition"
-        android:layout_alignParentLeft="true"
-        android:gravity="center"/>
+        android:layout_alignParentLeft="true">
 
-    <TextView
-        android:id="@+id/tv_setting"
-        android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/offline_download"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/offline_download"
+            android:drawablePadding="5dp"
+            android:background="@drawable/nav_header"/>
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/my_setting"
-        android:textColor="@android:color/white"
         android:layout_below="@id/head_image"
         android:layout_alignLeft="@id/partition"
-        android:layout_alignParentRight="true"
-        android:gravity="center"/>
+        android:layout_alignParentRight="true">
+
+        <TextView
+            android:id="@+id/tv_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_setting"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_settings"
+            android:drawablePadding="5dp"
+            android:background="@drawable/nav_header"/>
+    </FrameLayout>
 </RelativeLayout>

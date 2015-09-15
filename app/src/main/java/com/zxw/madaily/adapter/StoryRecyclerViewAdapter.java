@@ -163,11 +163,13 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             List<String> urls = story.getImages();
 
             if (urls!= null && urls.size() > 0 ) {
-
-                if (((StoryViewHolder) holder).mImage.getTag() == null || !((StoryViewHolder) holder).mImage.getTag().equals(urls.get(0)))
+                ((StoryViewHolder) holder).mImage.setVisibility(View.VISIBLE);
+                if (((StoryViewHolder) holder).mImage.getTag() == null || !((StoryViewHolder) holder).mImage.getTag().equals(urls.get(0))) {
                     Utils.loadImage(urls.get(0), ((StoryViewHolder) holder).mImage);
+                }
+            } else {
+                ((StoryViewHolder) holder).mImage.setVisibility(View.GONE);
             }
-
             ((StoryViewHolder) holder).mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
             CardView card = (CardView) ((StoryViewHolder) holder).mTitle.getParent().getParent();
             card.setCardBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.card_back));

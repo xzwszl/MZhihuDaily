@@ -3,6 +3,7 @@ package com.zxw.madaily;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -236,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                menu.getItem(0).getActionView().setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.window_background));
                 mDrawerLayout.setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.window_background));
                 toolbar.setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.colorPrimary));
-                ((View) mOffLine.getParent()).setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.colorPrimary));
+                ((View) mOffLine.getParent().getParent()).setBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.colorPrimary));
                 mThemeAdapter.notifyDataSetChanged();
                 if (mMainFragment != null) mMainFragment.refreshView();
                 if (mOtherFragment != null) mOtherFragment.refreshView();
