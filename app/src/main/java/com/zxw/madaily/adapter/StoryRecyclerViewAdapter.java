@@ -226,7 +226,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    public class TopViewHolder extends RecyclerView.ViewHolder {
+    public static class TopViewHolder extends RecyclerView.ViewHolder {
 
         public final ViewPager mViewPager;
         public final TextView mTitle;
@@ -241,10 +241,10 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             dealWithViewPager(mViewPager, mTitle);
         }
 
-        public void update() {
-            mTopAdapter.setmTopStories(mNews.get(0).getTop_stories());
-            mTopAdapter.notifyDataSetChanged();
-        }
+//        public void update() {
+//            mTopAdapter.setmTopStories(mNews.get(0).getTop_stories());
+//            mTopAdapter.notifyDataSetChanged();
+//        }
         private void dealWithViewPager(final ViewPager vp, final TextView tv) {
 
             vp.setAdapter(mTopAdapter);

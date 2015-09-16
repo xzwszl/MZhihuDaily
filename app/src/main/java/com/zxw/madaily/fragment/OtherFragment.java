@@ -121,7 +121,7 @@ public class OtherFragment extends Fragment {
                     int count = stories.size();
 
                     LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-                    if (layoutManager.findLastCompletelyVisibleItemPosition() == count - 1) {
+                    if (layoutManager.findLastCompletelyVisibleItemPosition() == count) {
                         loading = true;
 
                         int id = stories.get(count - 1).getId();

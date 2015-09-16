@@ -49,4 +49,6 @@
     <string name="mode_night">夜间模式</string>
     <string name="mode_day">日间模式</string>
 
+    <string name="other_editor">主编</string>
+
 </resources>

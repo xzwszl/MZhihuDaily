@@ -250,13 +250,15 @@ public class ContentActivity extends AppCompatActivity implements View.OnClickLi
         SharedPreferences preferences = getSharedPreferences("app", Context.MODE_PRIVATE);
         if (Utils.isWifiAvailable(getApplicationContext()) || !PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(SettingFragment.NO_PICTURE, false)) {
             if (preferences.getBoolean("mode", false)) {
-                load = "onLoad=\"onLoaded('mode', true)\"";
+                load = "onLoad=\"onLoaded(true, true)\"";
             } else {
-                load = "onLoad=\"onLoaded()\"";
+                load = "onLoad=\"onLoaded(false,true)\"";
             }
         } else {
             if (preferences.getBoolean("mode", false)) {
-                load = "onLoad=\"onLoaded('mode')\"";
+                load = "onLoad=\"onLoaded( true, false)\"";
+            } else {
+                load = "onLoad=\"onLoaded( false, false)\"";
             }
         }
         mWebView.loadDataWithBaseURL("file:///android_asset/",
