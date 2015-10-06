@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.DailyApplication;
+import com.zxw.madaily.MainActivity;
 import com.zxw.madaily.R;
 import com.zxw.madaily.adapter.OtherRecyclerViewAdapter;
 import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
@@ -197,10 +198,12 @@ public class OtherFragment extends Fragment {
                     @Override
                     public void select(View view, int position) {
                         Intent intent = new Intent(getActivity(), ContentActivity.class);
-                        intent.putExtra("id", dt.getStories().get(position-1).getId());
+                        intent.putExtra("id", dt.getStories().get(position-2).getId());
+                        ((MainActivity) getActivity()).updateReadSet(dt.getStories().get(position - 2).getId());
+                        mOAdapter.notifyItemChanged(position);
                         startActivity(intent);
                     }
-                });
+                }, ((MainActivity)getActivity()).getReadSet());
                 mRecyclerView.setAdapter(mOAdapter);
             } else {
                 if (dt != null){

@@ -20,6 +20,7 @@ import com.zxw.madaily.http.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by xzwszl on 7/22/2015.
@@ -28,10 +29,11 @@ public class TopStoryAdapter extends PagerAdapter{
 
     private List<Story> mTopStories;
     private List<ImageView> mTopViews;
+    private Set<Integer> mReadSet;
 
-    public TopStoryAdapter(final Context context, List<Story> topStories){
+    public TopStoryAdapter(final Context context, List<Story> topStories,Set<Integer> readSet){
         this.mTopStories = topStories;
-
+        this.mReadSet = readSet;
         if (topStories != null) {
             mTopViews = new ArrayList<ImageView>();
             for (int i = 0; i < mTopStories.size(); i++){
@@ -47,6 +49,7 @@ public class TopStoryAdapter extends PagerAdapter{
 
                         Intent intent = new Intent(context, ContentActivity.class);
                         intent.putExtra("id", mTopStories.get(finalI).getId());
+                        mReadSet.add(mTopStories.get(finalI).getId());
                         context.startActivity(intent);
                     }
                 });

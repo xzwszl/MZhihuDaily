@@ -29,9 +29,15 @@ public class DBHelper extends SQLiteOpenHelper {
             "kid INTEGER NOT NULL," +
             "content TEXT NOT NULL);";
 
+    //read table
+    private static final String CREATE_READ_TABLE = "CREATE TABLE table_read(" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "aid INTEGER NOT NULL);";
+
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
+
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -42,6 +48,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTENT_TABLE);
         db.execSQL(CREATE_NEWS_TABLE);
         db.execSQL(CREATE_THEME_TABLE);
+        db.execSQL(CREATE_READ_TABLE);
     }
 
     @Override
@@ -51,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS table_news");
             db.execSQL("DROP TABLE IF EXISTS table_themes");
             db.execSQL("DROP TABLE IF EXISTS table_content");
-
+            db.execSQL("DROP TABLE IF EXISTS table_read");
             onCreate(db);
         }
     }

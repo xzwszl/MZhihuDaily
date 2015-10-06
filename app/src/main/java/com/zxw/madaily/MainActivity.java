@@ -3,9 +3,11 @@ package com.zxw.madaily;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -36,6 +38,7 @@ import com.google.gson.Gson;
 import com.zxw.madaily.adapter.ThemeAdapter;
 import com.zxw.madaily.config.Urls;
 import com.zxw.madaily.db.NewsHandler;
+import com.zxw.madaily.db.ReadHandler;
 import com.zxw.madaily.entity.DailyTheme;
 import com.zxw.madaily.entity.LatestNews;
 import com.zxw.madaily.entity.Theme;
@@ -43,6 +46,8 @@ import com.zxw.madaily.fragment.MainFragment;
 import com.zxw.madaily.fragment.OtherFragment;
 import com.zxw.madaily.tool.FileUtils;
 import com.zxw.madaily.tool.ViewUtils;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -58,24 +63,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MainFragment mMainFragment;
     private OtherFragment mOtherFragment;
 
+    private ReadHandler mReadHandler;
+    private Set<Integer> mReadSet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-
     }
 
     private void init(){
-
         initView();
+        setupReadSet();
         gson = new Gson();
         loadTheme();
-
     }
 
+    public void setupReadSet() {
+        mReadHandler = new ReadHandler(getApplicationContext());
+        mReadSet = mReadHandler.findReadSet();
+    }
 
+    public void updateReadSet(int aid) {
+        mReadSet.add(aid);
+    }
 
+    public Set<Integer> getReadSet() {
+        return mReadSet;
+    }
     private void initView(){
 
         mThemesListView = (ListView) findViewById(R.id.lv_themes);
@@ -285,6 +301,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DailyTheme dt = gson.fromJson(response, DailyTheme.class);
         mThemeAdapter = new ThemeAdapter(dt.getOthers());
         mThemesListView.setAdapter(mThemeAdapter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mReadHandler.replaceReadSet(mReadSet);
     }
 
     @Override

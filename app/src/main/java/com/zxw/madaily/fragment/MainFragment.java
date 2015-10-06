@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.zxw.madaily.ContentActivity;
 import com.zxw.madaily.DailyApplication;
+import com.zxw.madaily.MainActivity;
 import com.zxw.madaily.R;
 import com.zxw.madaily.adapter.StoryRecyclerViewAdapter;
 import com.zxw.madaily.config.Urls;
@@ -100,9 +101,11 @@ public class MainFragment extends Fragment{
                 public void select(View view, int position) {
                     Intent intent = new Intent(getActivity(), ContentActivity.class);
                     intent.putExtra("id", ((Story) mStoryRecyclerViewAdapter.getOjbect(position)).getId());
+                    ((MainActivity)getActivity()).updateReadSet(((Story) mStoryRecyclerViewAdapter.getOjbect(position)).getId());
+                    mStoryRecyclerViewAdapter.notifyItemChanged(position);
                     startActivity(intent);
                 }
-            });
+            }, ((MainActivity)getActivity()).getReadSet());
         }
 
         mNewsRV.setAdapter(mStoryRecyclerViewAdapter);

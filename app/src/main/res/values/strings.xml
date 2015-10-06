@@ -26,6 +26,7 @@
     <color name="colorPrimary">#0893AD</color>
     <color name="card_back">#EEE</color>
     <color name="text_color">#333</color>
+    <color name="text_read_color">#666</color>
 
     <color name="half_primary">#8F0893AD</color>
     <color name="hard_primary">#AF0893AD</color>

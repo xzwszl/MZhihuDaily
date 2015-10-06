@@ -9,6 +9,7 @@ import android.preference.PreferenceScreen;
 
 import com.zxw.madaily.R;
 import com.zxw.madaily.db.NewsHandler;
+import com.zxw.madaily.db.ReadHandler;
 import com.zxw.madaily.db.TableHandler;
 import com.zxw.madaily.tool.ViewUtils;
 
@@ -43,8 +44,9 @@ public class SettingFragment extends PreferenceFragment {
     }
 
     private void clearDatabase() {
-        new TableHandler(getActivity(), TableHandler.TABLE_CONTENT).deleteAll();
-        new TableHandler(getActivity(), TableHandler.TABLE_THEMES).deleteAll();
-        new NewsHandler(getActivity()).deleteAll();
+        new TableHandler(getActivity().getApplicationContext(), TableHandler.TABLE_CONTENT).deleteAll();
+        new TableHandler(getActivity().getApplicationContext(), TableHandler.TABLE_THEMES).deleteAll();
+        new NewsHandler(getActivity().getApplicationContext()).deleteAll();
+        new ReadHandler(getActivity().getApplicationContext()).deleteAll();
     }
 }

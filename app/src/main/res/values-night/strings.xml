@@ -14,4 +14,5 @@
 
     <color name="card_back">#888</color>
     <color name="text_color">#CCC</color>
+    <color name="text_read_color">#AAA</color>
 </resources>

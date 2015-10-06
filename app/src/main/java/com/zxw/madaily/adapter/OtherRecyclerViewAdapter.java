@@ -15,6 +15,7 @@ import com.zxw.madaily.entity.DetailTheme;
 import com.zxw.madaily.entity.Story;
 import com.zxw.madaily.http.Utils;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by sony on 2015/7/23.
@@ -24,9 +25,11 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
     private DetailTheme mDetailTheme;
     private StoryRecyclerViewAdapter.OnItemSelectedLinstener linstener;
     private EditorRecyclerViewAdapter mEditorAdapter;
-    public OtherRecyclerViewAdapter(DetailTheme detailTheme, StoryRecyclerViewAdapter.OnItemSelectedLinstener linstener){
+    private Set<Integer> mReadSet;
+    public OtherRecyclerViewAdapter(DetailTheme detailTheme, StoryRecyclerViewAdapter.OnItemSelectedLinstener linstener, Set<Integer> readSet){
         this.mDetailTheme = detailTheme;
         this.linstener = linstener;
+        this.mReadSet = readSet;
         mEditorAdapter = new EditorRecyclerViewAdapter(mDetailTheme.getEditors());
     }
 
@@ -104,8 +107,11 @@ public class OtherRecyclerViewAdapter extends  RecyclerView.Adapter<RecyclerView
             CardView card = (CardView) svh.mTitle.getParent().getParent();
             card.setCardBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.card_back));
             svh.mTitle.setText(mDetailTheme.getStories().get(position - 2).getTitle());
-            svh.mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
-
+            if (mReadSet.contains(mDetailTheme.getStories().get(position - 2).getId())) {
+                svh.mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_read_color));
+            } else {
+                svh.mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            }
         } else if (type == 0) {
             StoryRecyclerViewAdapter.StoryViewHolder ovh = (StoryRecyclerViewAdapter.StoryViewHolder) holder;
             Utils.loadImage(mDetailTheme.getBackground(), ovh.mImage);

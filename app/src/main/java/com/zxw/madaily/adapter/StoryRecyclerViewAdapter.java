@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by xzwszl on 7/22/2015.
@@ -35,11 +36,13 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
     private static  TopStoryAdapter mTopAdapter;
     private OnItemSelectedLinstener mOnItemSelectedLinstener;
     private Context mContext;
+    private Set<Integer> mReadSet;
 
-    public StoryRecyclerViewAdapter(Context context, List<LatestNews> news, OnItemSelectedLinstener linstener){
+    public StoryRecyclerViewAdapter(Context context, List<LatestNews> news, OnItemSelectedLinstener linstener, Set<Integer> readSet){
         this.mNews = news;
         this.mOnItemSelectedLinstener = linstener;
         this.mContext = context;
+        this.mReadSet = readSet;
     }
 
     public void addFirstNews(LatestNews news) {
@@ -51,7 +54,7 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
         }
         mNews.add(news);
 
-        if (mTopAdapter == null && mNews != null && mNews.size()> 0) mTopAdapter = new TopStoryAdapter(mContext, mNews.get(0).getTop_stories());
+        if (mTopAdapter == null && mNews != null && mNews.size()> 0) mTopAdapter = new TopStoryAdapter(mContext, mNews.get(0).getTop_stories(), mReadSet);
         else if (mTopAdapter != null) {
             mTopAdapter.setmTopStories(mNews.get(0).getTop_stories());
             mTopAdapter.notifyDataSetChanged();
@@ -170,7 +173,11 @@ public class StoryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
             } else {
                 ((StoryViewHolder) holder).mImage.setVisibility(View.GONE);
             }
-            ((StoryViewHolder) holder).mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            if (mReadSet.contains(story.getId())) {
+                ((StoryViewHolder) holder).mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_read_color));
+            } else {
+                ((StoryViewHolder) holder).mTitle.setTextColor(DailyApplication.mInstance.getAppResource().getColor(R.color.text_color));
+            }
             CardView card = (CardView) ((StoryViewHolder) holder).mTitle.getParent().getParent();
             card.setCardBackgroundColor(DailyApplication.mInstance.getAppResource().getColor(R.color.card_back));
         } else {
